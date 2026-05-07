@@ -1,26 +1,91 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand palette — 우리미디어 (앱과 동일) */
+  --navy-deep: #0a1f44;
+  --navy-mid: #1f3a6e;
+  --navy-light: #2c4f8c;
+  --gold-main: #d4af37;
+  --gold-light: #e8c160;
+  --gold-deep: #b78628;
+
+  --bg: #ffffff;
+  --bg-soft: #fafafc;
+  --text: #1a1a1a;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+  --divider: #e2e8f0;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-navy-deep: var(--navy-deep);
+  --color-navy-mid: var(--navy-mid);
+  --color-navy-light: var(--navy-light);
+  --color-gold-main: var(--gold-main);
+  --color-gold-light: var(--gold-light);
+  --color-gold-deep: var(--gold-deep);
+  --color-bg-soft: var(--bg-soft);
+  --color-text-muted: var(--text-muted);
+  --color-text-dim: var(--text-dim);
+  --color-divider: var(--divider);
+
+  --font-sans: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui,
+    -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui,
+    sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+}
+
+/* 우리미디어 그라디언트 */
+.bg-navy-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--navy-deep) 0%,
+    var(--navy-mid) 100%
+  );
+}
+.bg-gold-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--gold-light) 0%,
+    var(--gold-main) 50%,
+    var(--gold-deep) 100%
+  );
+}
+
+/* 가는 골드 보더 */
+.gold-rule {
+  height: 2px;
+  width: 32px;
+  background: var(--gold-main);
+  display: inline-block;
+}
+
+/* W 로고 (원형) */
+.w-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-main));
+  color: var(--navy-deep);
+  font-weight: 900;
+  font-size: 1.25rem;
+  letter-spacing: -0.05em;
+}
+
+/* 다크 톤 색상에서 텍스트 가독성 보강 */
+.bg-navy-gradient,
+.bg-navy-deep {
+  color: #ffffff;
 }
