@@ -9,7 +9,12 @@ type AuthContextValue = {
   ready: boolean;
   signInWith: (provider: string) => Promise<void>;
   signInGuest: () => Promise<void>;
-  signInEmail: (email: string) => Promise<void>;
+  signInEmail: (email: string, password: string) => Promise<void>;
+  signUpEmail: (
+    email: string,
+    password: string,
+    displayName?: string,
+  ) => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -126,11 +131,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await callOAuth("guest", { displayName: "게스트" });
   }
 
-  async function signInEmail(email: string) {
-    await callOAuth("email", {
-      email,
-      displayName: email.split("@")[0],
-    });
+  async function signInEmail(email: string, password: string) {
+    try {
+      const res = await api.emailLogin(email, password);
+      persist(toWmUser(res.user), res.tokens.accessToken);
+    } catch (e) {
+      const msg =
+        e instanceof ApiError
+          ? _emailErrorMessage(e)
+          : "로그인 실패 — 네트워크를 확인해주세요";
+      throw new Error(msg);
+    }
+  }
+
+  async function signUpEmail(
+    email: string,
+    password: string,
+    displayName?: string,
+  ) {
+    try {
+      const res = await api.emailSignup(email, password, displayName);
+      persist(toWmUser(res.user), res.tokens.accessToken);
+    } catch (e) {
+      const msg =
+        e instanceof ApiError
+          ? _emailErrorMessage(e)
+          : "회원가입 실패 — 네트워크를 확인해주세요";
+      throw new Error(msg);
+    }
   }
 
   async function signOut() {
@@ -139,11 +167,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, ready, signInWith, signInGuest, signInEmail, signOut }}
+      value={{
+        user,
+        ready,
+        signInWith,
+        signInGuest,
+        signInEmail,
+        signUpEmail,
+        signOut,
+      }}
     >
       {children}
     </AuthContext.Provider>
   );
+}
+
+function _emailErrorMessage(e: ApiError): string {
+  switch (e.code) {
+    case "EMAIL_TAKEN":
+      return "이미 가입된 이메일입니다. 로그인해주세요.";
+    case "INVALID_EMAIL":
+      return "올바른 이메일 형식이 아닙니다.";
+    case "WEAK_PASSWORD":
+      return "비밀번호는 8자 이상이어야 합니다.";
+    case "INVALID_CREDENTIALS":
+      return "이메일 또는 비밀번호가 올바르지 않습니다.";
+    default:
+      return `오류 (${e.code || e.status})`;
+  }
 }
 
 export function useAuth() {

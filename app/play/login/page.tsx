@@ -11,10 +11,15 @@ const providers = [
 ];
 
 export default function PlayLoginPage() {
-  const { signInWith, signInGuest, signInEmail } = useAuth();
+  const { signInWith, signInGuest, signInEmail, signUpEmail } = useAuth();
   const [busy, setBusy] = useState<string | null>(null);
   const [emailMode, setEmailMode] = useState(false);
+  const [signUp, setSignUp] = useState(false);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [pwConfirm, setPwConfirm] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [errMsg, setErrMsg] = useState<string | null>(null);
 
   async function go(p: string) {
     if (busy) return;
@@ -28,10 +33,32 @@ export default function PlayLoginPage() {
   }
 
   async function goEmail() {
-    if (!email.trim() || busy) return;
+    if (busy) return;
+    setErrMsg(null);
+    const e = email.trim();
+    if (!e || !password) {
+      setErrMsg("이메일과 비밀번호를 입력해주세요");
+      return;
+    }
+    if (signUp) {
+      if (password.length < 8) {
+        setErrMsg("비밀번호는 8자 이상이어야 합니다");
+        return;
+      }
+      if (password !== pwConfirm) {
+        setErrMsg("비밀번호 확인이 일치하지 않습니다");
+        return;
+      }
+    }
     setBusy("email");
     try {
-      await signInEmail(email.trim());
+      if (signUp) {
+        await signUpEmail(e, password, displayName.trim() || undefined);
+      } else {
+        await signInEmail(e, password);
+      }
+    } catch (err) {
+      setErrMsg(err instanceof Error ? err.message : "로그인 실패");
     } finally {
       setBusy(null);
     }
@@ -73,35 +100,100 @@ export default function PlayLoginPage() {
         </div>
 
         {emailMode ? (
-          <div className="space-y-3">
+          <div className="space-y-3 text-left">
             <input
               type="email"
-              placeholder="이메일을 입력해주세요"
+              placeholder="이메일"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/40 outline-none focus:border-gold-main"
             />
+            <input
+              type="password"
+              placeholder={signUp ? "비밀번호 (8자 이상)" : "비밀번호"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/40 outline-none focus:border-gold-main"
+            />
+            {signUp && (
+              <>
+                <input
+                  type="password"
+                  placeholder="비밀번호 확인"
+                  value={pwConfirm}
+                  onChange={(e) => setPwConfirm(e.target.value)}
+                  className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/40 outline-none focus:border-gold-main"
+                />
+                <input
+                  type="text"
+                  placeholder="닉네임 (선택)"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/40 outline-none focus:border-gold-main"
+                />
+              </>
+            )}
+            {errMsg && (
+              <div className="rounded-lg bg-red-500/15 px-3 py-2 text-xs text-red-200">
+                {errMsg}
+              </div>
+            )}
             <button
               onClick={goEmail}
               disabled={!email || busy === "email"}
-              className="h-12 w-full rounded-xl bg-white/15 text-sm font-extrabold text-white transition hover:bg-white/25 disabled:opacity-60"
+              className="h-12 w-full rounded-xl bg-gold-main text-sm font-extrabold text-navy-deep transition hover:brightness-105 disabled:opacity-60"
             >
-              {busy === "email" ? "잠시만요…" : "이메일로 로그인"}
+              {busy === "email"
+                ? "잠시만요…"
+                : signUp
+                  ? "가입하고 시작"
+                  : "이메일로 로그인"}
             </button>
-            <button
-              onClick={() => setEmailMode(false)}
-              className="text-xs text-white/60 hover:text-white"
-            >
-              취소
-            </button>
+            <div className="flex items-center justify-between text-xs">
+              <button
+                onClick={() => {
+                  setSignUp((s) => !s);
+                  setErrMsg(null);
+                }}
+                className="text-gold-light hover:underline"
+              >
+                {signUp
+                  ? "이미 계정이 있어요 — 로그인"
+                  : "계정이 없어요 — 회원가입"}
+              </button>
+              <button
+                onClick={() => {
+                  setEmailMode(false);
+                  setErrMsg(null);
+                }}
+                className="text-white/60 hover:text-white"
+              >
+                취소
+              </button>
+            </div>
           </div>
         ) : (
-          <button
-            onClick={() => setEmailMode(true)}
-            className="text-sm font-bold text-white/70 hover:text-white"
-          >
-            ✉ 이메일로 로그인
-          </button>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={() => {
+                setEmailMode(true);
+                setSignUp(false);
+              }}
+              className="text-sm font-bold text-white/70 hover:text-white"
+            >
+              ✉ 이메일 로그인
+            </button>
+            <span className="text-white/30">·</span>
+            <button
+              onClick={() => {
+                setEmailMode(true);
+                setSignUp(true);
+              }}
+              className="text-sm font-extrabold text-gold-light hover:underline"
+            >
+              회원가입
+            </button>
+          </div>
         )}
 
         <button

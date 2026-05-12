@@ -109,6 +109,22 @@ export const api = {
       auth: false,
     }),
 
+  // 이메일 회원가입 — bcrypt(scrypt) 해시 후 users 저장
+  emailSignup: (email: string, password: string, displayName?: string) =>
+    request<AuthResponse>("/v1/auth/email/signup", {
+      method: "POST",
+      body: { email, password, displayName },
+      auth: false,
+    }),
+
+  // 이메일 로그인 — scrypt timing-safe verify
+  emailLogin: (email: string, password: string) =>
+    request<AuthResponse>("/v1/auth/email/login", {
+      method: "POST",
+      body: { email, password },
+      auth: false,
+    }),
+
   // 시리얼 활성화 (인증 필요)
   activate: (serialNumber: string, device?: { platform?: string; appVersion?: string; deviceId?: string }) =>
     request<ActivateResponse>("/v1/serials/activate", {
