@@ -1,23 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  /* Brand palette — 우리미디어 (앱과 동일) */
-  --navy-deep: #0a1f44;
-  --navy-mid: #1f3a6e;
-  --navy-light: #2c4f8c;
-  --gold-main: #d4af37;
-  --gold-light: #e8c160;
-  --gold-deep: #b78628;
+  /* WooriMedia palette — Ink / Paper / White
+     골드/네이비 럭셔리에서 클래식 출판물 톤으로 전환. */
+  --woori-ink: #0a0a0a;
+  --woori-paper: #f6f4ef;
+  --woori-white: #ffffff;
 
-  --bg: #ffffff;
-  --bg-soft: #fafafc;
-  --text: #1a1a1a;
-  --text-muted: #64748b;
-  --text-dim: #94a3b8;
-  --divider: #e2e8f0;
+  --woori-ink-subtle: rgba(10, 10, 10, 0.55);
+  --woori-paper-subtle: rgba(246, 244, 239, 0.55);
+  --woori-ink-hairline: rgba(10, 10, 10, 0.10);
+  --woori-paper-hairline: rgba(246, 244, 239, 0.10);
+
+  /* 의미별 alias */
+  --bg: var(--woori-paper);
+  --bg-soft: var(--woori-paper);
+  --bg-elevated: var(--woori-white);
+  --text: var(--woori-ink);
+  --text-muted: var(--woori-ink-subtle);
+  --text-dim: rgba(10, 10, 10, 0.35);
+  --divider: var(--woori-ink-hairline);
+
+  /* Legacy alias — 점진 마이그레이션. 페이지 코드들이 navy-deep / gold-main 을
+     참조하는 동안 새 팔레트로 자동 매핑. 각 페이지 검토 후 새 토큰으로 전환. */
+  --navy-deep: var(--woori-ink);
+  --navy-mid: #1a1a1a;
+  --navy-light: #2a2a2a;
+  --gold-main: var(--woori-ink);
+  --gold-light: #333333;
+  --gold-deep: var(--woori-ink);
 }
 
 @theme inline {
+  --color-woori-ink: var(--woori-ink);
+  --color-woori-paper: var(--woori-paper);
+  --color-woori-white: var(--woori-white);
+
   --color-navy-deep: var(--navy-deep);
   --color-navy-mid: var(--navy-mid);
   --color-navy-light: var(--navy-light);
@@ -44,32 +62,27 @@ body {
   letter-spacing: -0.01em;
 }
 
-/* 우리미디어 그라디언트 */
+/* 미니멀 톤 — 그라데이션은 거의 사용 안 함. 호환용 alias 만 유지. */
 .bg-navy-gradient {
-  background: linear-gradient(
-    135deg,
-    var(--navy-deep) 0%,
-    var(--navy-mid) 100%
-  );
+  background: var(--woori-ink);
+  color: var(--woori-paper);
 }
 .bg-gold-gradient {
-  background: linear-gradient(
-    135deg,
-    var(--gold-light) 0%,
-    var(--gold-main) 50%,
-    var(--gold-deep) 100%
-  );
+  /* 'gold' 자체가 새 팔레트에 없음 — ink 단색으로 매핑. */
+  background: var(--woori-ink);
+  color: var(--woori-paper);
 }
 
-/* 가는 골드 보더 */
-.gold-rule {
-  height: 2px;
+/* Ink rule (구 gold-rule alias) */
+.gold-rule,
+.ink-rule {
+  height: 1px;
   width: 32px;
-  background: var(--gold-main);
+  background: var(--woori-ink);
   display: inline-block;
 }
 
-/* W 로고 (원형) */
+/* 로고 마크 — CSS 박스 placeholder. 신규 코드는 <img src="/logo/woorimedia-mark-only.svg"/> 사용 권장. */
 .w-mark {
   display: inline-flex;
   align-items: center;
@@ -77,15 +90,16 @@ body {
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 9999px;
-  background: linear-gradient(135deg, var(--gold-light), var(--gold-main));
-  color: var(--navy-deep);
+  background: var(--woori-ink);
+  color: var(--woori-paper);
   font-weight: 900;
   font-size: 1.25rem;
   letter-spacing: -0.05em;
 }
 
-/* 다크 톤 색상에서 텍스트 가독성 보강 */
+/* 다크 영역 가독성 */
 .bg-navy-gradient,
-.bg-navy-deep {
-  color: #ffffff;
+.bg-navy-deep,
+.bg-woori-ink {
+  color: var(--woori-paper);
 }

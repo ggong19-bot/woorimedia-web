@@ -147,7 +147,8 @@ export const api = {
       body: { albumId },
     }),
 
-  // 음원 재생용 signed URL (인증 필요, TTL 5분)
+  // 음원 재생용 signed URL — 평문 wav 가 audio-master 에 있을 때만 동작.
+  // 보안 모델상 .wm 만 보관하면 404. streamUrl 을 우선 사용.
   audioUrl: (albumId: string, trackId: string, format?: string) =>
     request<{
       url: string;
@@ -159,6 +160,35 @@ export const api = {
     }>("/v1/content/audio-url", {
       method: "POST",
       body: { albumId, trackId, format },
+    }),
+
+  // 백엔드 stream-decrypt proxy URL (5분 TTL).
+  // backend 가 .wm 을 AES-256-CTR stream-decrypt 해서 progressive wav 로 전송.
+  // HTML5 audio element 가 chunked transfer 받으면서 progressive 재생.
+  streamUrl: (albumId: string, trackId: string) =>
+    request<{
+      url: string;
+      expiresAt: string;
+      albumId: string;
+      trackId: string;
+    }>("/v1/content/stream-url", {
+      method: "POST",
+      body: { albumId, trackId },
+    }),
+
+  // TV / 헤드리스 device_code flow — 폰 측 인증 (인증 필요).
+  // userCode 만 보내면 미리보기 (preview=true), approve true/false 면 승인/거부.
+  verifyDeviceCode: (userCode: string, approve?: boolean) =>
+    request<{
+      ok: boolean;
+      preview?: boolean;
+      status?: string;
+      clientName?: string | null;
+      expiresAt?: string;
+    }>("/v1/auth/device/verify", {
+      method: "POST",
+      body:
+        approve === undefined ? { userCode } : { userCode, approve },
     }),
 };
 

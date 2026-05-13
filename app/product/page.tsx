@@ -126,12 +126,12 @@ export default function ProductPage() {
         <p className="mt-4 text-base text-text-muted">
           데모 계정으로 로그인하면 데모 라이브러리 청취가 가능합니다.
         </p>
-        <Link
-          href="/play"
+        <a
+          href="https://play.woori-media.com"
           className="mt-8 inline-flex h-12 items-center rounded-full bg-navy-deep px-8 text-sm font-extrabold text-white transition hover:bg-navy-mid"
         >
           웹 플레이어 시작 →
-        </Link>
+        </a>
       </section>
     </main>
   );

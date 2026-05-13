@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { AuthProvider, useAuth } from "@/lib/auth_context";
@@ -33,12 +34,22 @@ function PlayInner({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-bg-soft pb-20">
       <header className="sticky top-0 z-20 border-b border-divider bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link href="/play" className="flex items-center gap-3">
-            <span className="w-mark">W</span>
-            <span className="text-base font-extrabold text-navy-deep">
-              우리미디어
-            </span>
-            <span className="ml-2 rounded-full bg-bg-soft px-2 py-0.5 text-[10px] font-extrabold tracking-widest text-gold-deep">
+          <Link href="/play" className="flex items-center gap-3" aria-label="우리미디어">
+            <Image
+              src="/logo/woorimedia-horizontal.svg"
+              alt="우리미디어"
+              width={130}
+              height={26}
+              priority
+              style={{ height: 26, width: "auto" }}
+            />
+            <span
+              className="ml-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold tracking-widest"
+              style={{
+                background: "var(--woori-ink)",
+                color: "var(--woori-paper)",
+              }}
+            >
               PLAY
             </span>
           </Link>
@@ -50,11 +61,26 @@ function PlayInner({ children }: { children: React.ReactNode }) {
             >
               홈으로
             </Link>
-            <div className="flex items-center gap-2 rounded-full border border-divider bg-white px-3 py-1.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-navy-deep text-xs font-extrabold text-gold-light">
+            <div
+              className="flex items-center gap-2 rounded-full px-3 py-1.5"
+              style={{
+                background: "var(--woori-white)",
+                border: "1px solid var(--woori-ink-hairline)",
+              }}
+            >
+              <span
+                className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-extrabold"
+                style={{
+                  background: "var(--woori-ink)",
+                  color: "var(--woori-paper)",
+                }}
+              >
                 {user?.initial || "W"}
               </span>
-              <span className="hidden text-sm font-semibold text-navy-deep md:inline-block">
+              <span
+                className="hidden text-sm font-semibold md:inline-block"
+                style={{ color: "var(--woori-ink)" }}
+              >
                 {user?.displayName}
               </span>
             </div>

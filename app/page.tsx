@@ -4,36 +4,65 @@ export default function HomePage() {
   return (
     <main>
       {/* ── Hero ───────────────────────────────────────── */}
-      <section className="bg-navy-gradient relative overflow-hidden">
-        <div className="absolute right-12 top-12 h-2 w-2 rounded-full bg-gold-main" />
+      <section
+        className="relative overflow-hidden"
+        style={{ background: "var(--woori-ink)" }}
+      >
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
           <div className="max-w-3xl">
-            <p className="text-xs font-extrabold tracking-[0.4em] text-gold-light">
+            <p
+              className="text-xs font-extrabold tracking-[0.4em]"
+              style={{ color: "var(--woori-paper-subtle)" }}
+            >
               WOORIMEDIA · LIMITED EDITION AUDIO PLATFORM
             </p>
-            <h1 className="mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight text-white md:text-7xl">
-              CD·DVD를 잇는
+            <h1
+              className="mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight md:text-7xl"
+              style={{ color: "var(--woori-paper)" }}
+            >
+              Studio audio.
               <br />
-              차세대 USB 미디어.
+              Cinema vision.
             </h1>
-            <span className="mt-8 block h-[2px] w-12 bg-gold-main" />
-            <p className="mt-6 max-w-xl text-lg text-white/85">
+            <p
+              className="mt-5 max-w-xl text-base"
+              style={{ color: "var(--woori-paper-subtle)" }}
+            >
+              원음 그대로, 시네마 그대로
+            </p>
+            <span
+              className="mt-8 block h-[1px] w-12"
+              style={{ background: "var(--woori-paper)" }}
+            />
+            <p
+              className="mt-6 max-w-xl text-lg"
+              style={{ color: "rgba(246, 244, 239, 0.85)" }}
+            >
               WAV 무손실 음원 + 4K 영상, USB 한 개로 어디서든. 제작사·기획사를 위한
               USB 미디어 발주 통합 플랫폼.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
                 href="/partners"
-                className="inline-flex h-12 items-center rounded-full bg-gold-gradient px-7 text-sm font-extrabold text-navy-deep shadow-lg shadow-black/20 transition hover:brightness-110"
+                className="inline-flex h-12 items-center rounded-full px-7 text-sm font-extrabold transition hover:brightness-95"
+                style={{
+                  background: "var(--woori-paper)",
+                  color: "var(--woori-ink)",
+                }}
               >
                 파트너 발주 안내 →
               </Link>
-              <Link
-                href="/play"
-                className="inline-flex h-12 items-center rounded-full border border-white/30 bg-white/5 px-7 text-sm font-extrabold text-white backdrop-blur transition hover:bg-white/10"
+              <a
+                href="https://play.woori-media.com"
+                className="inline-flex h-12 items-center rounded-full px-7 text-sm font-extrabold backdrop-blur transition"
+                style={{
+                  border: "1px solid rgba(246, 244, 239, 0.30)",
+                  background: "rgba(246, 244, 239, 0.05)",
+                  color: "var(--woori-paper)",
+                }}
               >
                 웹 플레이어 둘러보기
-              </Link>
+              </a>
             </div>
           </div>
         </div>

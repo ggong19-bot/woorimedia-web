@@ -123,8 +123,18 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       duration: 0,
     }));
 
-    api
-      .audioUrl(s.album.id, track.id)
+    // 우선 stream-decrypt proxy 시도 (보안 모델: .wm 만 storage 에 보관).
+    // 실패 시 옛 audioUrl 로 fallback (평문 wav 있는 데모1 같은 경우).
+    const albumId = s.album.id;
+    const tryStream = async () => {
+      try {
+        return await api.streamUrl(albumId, track.id);
+      } catch {
+        return await api.audioUrl(albumId, track.id);
+      }
+    };
+
+    tryStream()
       .then((res) => {
         if (cancelled) return;
         a.src = res.url;

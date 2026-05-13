@@ -65,18 +65,29 @@ export default function PlayLoginPage() {
   }
 
   return (
-    <div className="bg-navy-gradient flex min-h-screen flex-col items-center justify-center px-6 py-16">
-      <div className="absolute right-8 top-8 h-2 w-2 rounded-full bg-gold-main" />
-
+    <div
+      className="flex min-h-screen flex-col items-center justify-center px-6 py-16"
+      style={{ background: "var(--woori-ink)" }}
+    >
       <div className="w-full max-w-md text-center">
-        <span className="bg-gold-gradient mx-auto flex h-20 w-20 items-center justify-center rounded-full text-4xl font-extrabold text-navy-deep shadow-2xl shadow-gold-main/30">
-          W
-        </span>
-        <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-white">
-          우리미디어
-        </h1>
-        <p className="mt-2 text-sm text-white/70">
-          한정판 무손실 음원 · 고화질 영상
+        {/* 마스터 로고 (paper 톤) — ink 배경 위. 마크 + Latin + 한글 stack. */}
+        <img
+          src="/logo/woorimedia-logo-master-paper.svg"
+          alt="우리미디어"
+          className="mx-auto"
+          style={{ width: 220, height: "auto" }}
+        />
+        <p
+          className="mt-7 text-base font-semibold"
+          style={{ color: "var(--woori-paper)" }}
+        >
+          Studio audio. Cinema vision.
+        </p>
+        <p
+          className="mt-1 text-sm"
+          style={{ color: "var(--woori-paper-subtle)" }}
+        >
+          원음 그대로, 시네마 그대로
         </p>
 
         <div className="mt-10 space-y-3">
