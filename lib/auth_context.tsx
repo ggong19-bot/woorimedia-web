@@ -119,11 +119,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // OAuth Redirect 흐름 — 백엔드가 IdP로 보낸 후 callback에서
     // frontend로 ?token=...&uid=...&email=... 와 함께 돌아옴.
     // useEffect가 query 캐치해서 persist.
-    if (provider === "kakao" || provider === "naver" || provider === "google") {
+    //
+    // Apple 도 같은 패턴 — backend `/v1/auth/apple` 가 Apple authorize 로 redirect.
+    // 응답은 form_post 방식이지만 backend 가 처리해서 frontend 로 query string 으로 돌려줌.
+    if (
+      provider === "kakao" ||
+      provider === "naver" ||
+      provider === "google" ||
+      provider === "apple"
+    ) {
       window.location.href = `${API_BASE_URL}/v1/auth/${provider}`;
       return; // navigate away
     }
-    // apple 등 미구현 + 그 외 provider: mock OAuth (백엔드)
+    // 그 외 provider: mock OAuth (백엔드)
     await callOAuth(provider);
   }
 
