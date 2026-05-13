@@ -4,7 +4,7 @@
 // TV 가 발급한 userCode (예: ABCD-EFGH) 를 사용자가 폰에서 입력하거나
 // QR 로 ?code= 파라미터로 도착. 로그인된 상태여야 승인 가능.
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth_context";
 import { api, ApiError } from "@/lib/api";
@@ -14,7 +14,17 @@ type PreviewState = {
   expiresAt?: string;
 };
 
+// Next.js 15: useSearchParams() 는 Suspense boundary 안에서만 호출 가능.
+// 외부 default export 가 Suspense wrapper, 내부 컴포넌트가 실제 페이지.
 export default function PairPage() {
+  return (
+    <Suspense fallback={null}>
+      <PairPageInner />
+    </Suspense>
+  );
+}
+
+function PairPageInner() {
   const router = useRouter();
   const params = useSearchParams();
   const { user, ready } = useAuth();
