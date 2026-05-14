@@ -249,8 +249,8 @@ export default function HomePage() {
                 한 번 활성화하면 iOS · Android · macOS · Windows · Web · TV — 어디서든.
               </p>
               <div className="ctas" style={{ marginTop: 36 }}>
-                <a href="#cta" className="primary">
-                  앱 다운로드
+                <a href="https://play.woori-media.com" className="primary">
+                  웹 플레이어
                 </a>
                 <a href="#what" className="ghost">
                   우리미디어란 →
@@ -784,8 +784,8 @@ export default function HomePage() {
             앱을 다운로드하고, USB를 연결하고, 시리얼을 등록하세요. 그 다음은 단순합니다 — 재생.
           </p>
           <div className="ctas">
-            <a href="#" className="primary">
-              앱 다운로드
+            <a href="https://play.woori-media.com" className="primary">
+              웹 플레이어
             </a>
             <a href="#partners" className="ghost">
               파트너 문의

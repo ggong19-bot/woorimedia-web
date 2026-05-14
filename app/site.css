@@ -894,26 +894,20 @@ footer.site .bottom .meta {
   gap: 32px;
 }
 
-/* huge wordmark in footer (visual punch) */
+/* huge wordmark in footer (visual punch) — 컨테이너 폭 안에서 잘리지 않게 축소 */
 footer.site .megamark {
-  font: 300 clamp(100px, 18vw, 280px)/0.9 "Space Grotesk";
+  font: 300 clamp(22px, 6.6vw, 96px)/0.9 "Space Grotesk";
   letter-spacing: -0.04em;
   color: rgba(246, 244, 239, 0.06);
   padding: 20px 0;
   margin-top: -48px;
   user-select: none;
-  overflow: hidden;
   white-space: nowrap;
 }
 
 /* utility */
 .fill {
   flex: 1;
-}
-.site-root .row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
 }
 hr.thin {
   border: 0;
