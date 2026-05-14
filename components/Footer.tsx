@@ -4,14 +4,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
+// 홈(/) 과 플레이어(/play, /pair) 는 자체 footer 를 렌더 — 글로벌 footer 숨김.
 const PLAYER_PATHS = ["/play", "/pair"];
 
 export default function Footer() {
   const path = usePathname();
-  const isPlayer = PLAYER_PATHS.some(
-    (p) => path === p || path.startsWith(p + "/"),
-  );
-  if (isPlayer) return null;
+  const hideChrome =
+    path === "/" ||
+    PLAYER_PATHS.some((p) => path === p || path.startsWith(p + "/"));
+  if (hideChrome) return null;
 
   return (
     <footer className="border-t border-divider/60 bg-bg-soft">
@@ -23,6 +24,7 @@ export default function Footer() {
               alt="우리미디어"
               width={160}
               height={32}
+              className="wm-logo-adaptive"
               style={{ height: 32, width: "auto" }}
             />
             <p

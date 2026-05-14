@@ -13,21 +13,22 @@ const links = [
 ];
 
 // 플레이어 영역 (/play, /pair) 은 자체 헤더 사용 — Header/Footer 숨김.
+// 홈(/) 은 리뉴얼 랜딩이 자체 nav/footer 를 렌더하므로 글로벌 chrome 숨김.
 // 호스트 분기 (woori-media.com vs play.woori-media.com) 는 middleware 가 처리.
 const PLAYER_PATHS = ["/play", "/pair"];
 
 export default function Header() {
   const path = usePathname();
-  const isPlayer = PLAYER_PATHS.some(
-    (p) => path === p || path.startsWith(p + "/"),
-  );
-  if (isPlayer) return null;
+  const hideChrome =
+    path === "/" ||
+    PLAYER_PATHS.some((p) => path === p || path.startsWith(p + "/"));
+  if (hideChrome) return null;
 
   return (
     <header
       className="sticky top-0 z-40 w-full backdrop-blur-md"
       style={{
-        background: "rgba(246, 244, 239, 0.85)",
+        background: "var(--woori-header-bg)",
         borderBottom: "1px solid var(--woori-ink-hairline)",
       }}
     >
@@ -40,6 +41,7 @@ export default function Header() {
             width={140}
             height={28}
             priority
+            className="wm-logo-adaptive"
             style={{ height: 28, width: "auto" }}
           />
         </Link>

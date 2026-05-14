@@ -11,7 +11,7 @@ const providers = [
 ];
 
 export default function PlayLoginPage() {
-  const { signInWith, signInGuest, signInEmail, signUpEmail } = useAuth();
+  const { signInWith, signInEmail, signUpEmail } = useAuth();
   const [busy, setBusy] = useState<string | null>(null);
   const [emailMode, setEmailMode] = useState(false);
   const [signUp, setSignUp] = useState(false);
@@ -25,8 +25,7 @@ export default function PlayLoginPage() {
     if (busy) return;
     setBusy(p);
     try {
-      if (p === "guest") await signInGuest();
-      else await signInWith(p);
+      await signInWith(p);
     } finally {
       setBusy(null);
     }
@@ -206,13 +205,6 @@ export default function PlayLoginPage() {
             </button>
           </div>
         )}
-
-        <button
-          onClick={() => go("guest")}
-          className="mt-3 block w-full text-sm font-extrabold text-gold-light underline-offset-4 hover:underline"
-        >
-          둘러보기 (게스트로 시작)
-        </button>
 
         <p className="mt-10 text-xs text-white/40">
           계속 진행 시 이용약관 및 개인정보처리방침에 동의합니다.
