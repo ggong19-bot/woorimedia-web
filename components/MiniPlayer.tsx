@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { fmt, usePlayer } from "@/lib/player_context";
 
 // 미니플레이어 — Ink/Paper 톤. 모든 컨트롤 inline SVG (stroke 기반).
@@ -47,43 +46,55 @@ export default function MiniPlayer() {
       </div>
 
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-6 py-3">
-        {/* 앨범 커버 / 마크 */}
-        <Link
-          href={`/play/album/${p.album.id}`}
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg"
+        {/* 앨범 커버 / 마크 — 클릭 시 전체 화면 플레이어 */}
+        <button
+          onClick={() => p.openFull()}
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg transition hover:brightness-95"
           style={{ background: "var(--woori-ink)" }}
-          aria-label="앨범으로 이동"
+          aria-label="전체 화면 플레이어 열기"
         >
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--woori-paper)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="9" />
             <path d="M9 8 L11 16 L13 11 L15 16 L17 8" />
           </svg>
-        </Link>
+        </button>
 
-        {/* 곡 정보 */}
-        <div className="flex-1 truncate">
-          <p
-            className="truncate text-sm font-extrabold"
-            style={{ color: "var(--woori-ink)" }}
-          >
-            {cur.title}
-          </p>
-          <p
-            className="truncate text-xs"
+        {/* 곡 정보 — 클릭 시 전체 화면 플레이어 */}
+        <button
+          onClick={() => p.openFull()}
+          className="flex flex-1 items-center gap-2 truncate text-left transition hover:opacity-80"
+          aria-label="전체 화면 플레이어 열기"
+        >
+          <span className="min-w-0 flex-1 truncate">
+            <span
+              className="block truncate text-sm font-extrabold"
+              style={{ color: "var(--woori-ink)" }}
+            >
+              {cur.title}
+            </span>
+            <span
+              className="block truncate text-xs"
+              style={{ color: "var(--woori-ink-subtle)" }}
+            >
+              {cur.artist} · {p.album.title} ·{" "}
+              <span className="font-mono">
+                {fmt(p.currentTime)} / {fmt(p.duration || cur.durationSeconds)}
+              </span>
+              {p.isLoading && <span className="ml-2">로딩…</span>}
+              {p.error && (
+                <span className="ml-2" style={{ color: "#B3261E" }}>
+                  ⚠ {p.error}
+                </span>
+              )}
+            </span>
+          </span>
+          <span
+            className="hidden shrink-0 md:block"
             style={{ color: "var(--woori-ink-subtle)" }}
           >
-            {cur.artist} · {p.album.title} ·{" "}
-            <span className="font-mono">
-              {fmt(p.currentTime)} / {fmt(p.duration || cur.durationSeconds)}
-            </span>
-            {p.isLoading && <span className="ml-2">로딩…</span>}
-            {p.error && (
-              <span className="ml-2" style={{ color: "#B3261E" }}>
-                ⚠ {p.error}
-              </span>
-            )}
-          </p>
-        </div>
+            <ChevronUpIcon />
+          </span>
+        </button>
 
         {/* 셔플 / 반복 — 활성화 표시는 색 + 아래 작은 점 */}
         <div className="hidden items-center gap-1 md:flex">
@@ -288,6 +299,14 @@ function CloseIcon() {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
       <path d="M6 6l12 12M6 18L18 6" />
+    </svg>
+  );
+}
+
+function ChevronUpIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 15l6 -6l6 6" />
     </svg>
   );
 }

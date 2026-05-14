@@ -23,6 +23,7 @@ type PlayerState = {
   duration: number; // seconds
   isLoading: boolean; // signed URL fetch + buffer 중
   error: string | null;
+  fullOpen: boolean; // 전체 화면 플레이어 표시 여부
 };
 
 type PlayerContextValue = PlayerState & {
@@ -35,6 +36,9 @@ type PlayerContextValue = PlayerState & {
   stop: () => void;
   current: () => Track | null;
   seek: (timeSeconds: number) => void;
+  jumpTo: (index: number) => void;
+  openFull: () => void;
+  closeFull: () => void;
 };
 
 const PlayerContext = createContext<PlayerContextValue | null>(null);
@@ -52,6 +56,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     duration: 0,
     isLoading: false,
     error: null,
+    fullOpen: false,
   });
 
   // repeat 모드를 ended 핸들러 안에서 stale 안 되게 ref로
@@ -265,6 +270,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       duration: 0,
       isLoading: false,
       error: null,
+      fullOpen: false,
     });
   }
 
@@ -280,6 +286,24 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  // 큐의 특정 인덱스로 직접 점프 (UP NEXT 목록에서 곡 클릭).
+  function jumpTo(index: number) {
+    setS((p) => {
+      if (index < 0 || index >= p.queue.length || index === p.currentIndex) {
+        return p;
+      }
+      return { ...p, currentIndex: index };
+    });
+  }
+
+  function openFull() {
+    setS((p) => ({ ...p, fullOpen: true }));
+  }
+
+  function closeFull() {
+    setS((p) => ({ ...p, fullOpen: false }));
+  }
+
   return (
     <PlayerContext.Provider
       value={{
@@ -293,6 +317,9 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         stop,
         current,
         seek,
+        jumpTo,
+        openFull,
+        closeFull,
       }}
     >
       {children}

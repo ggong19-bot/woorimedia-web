@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { AuthProvider, useAuth } from "@/lib/auth_context";
 import { PlayerProvider } from "@/lib/player_context";
 import MiniPlayer from "@/components/MiniPlayer";
+import FullPlayer from "@/components/FullPlayer";
 
 function PlayInner({ children }: { children: React.ReactNode }) {
   const { user, ready, signOut } = useAuth();
@@ -41,6 +42,7 @@ function PlayInner({ children }: { children: React.ReactNode }) {
               width={130}
               height={26}
               priority
+              className="wm-logo-adaptive"
               style={{ height: 26, width: "auto" }}
             />
             <span
@@ -99,6 +101,7 @@ function PlayInner({ children }: { children: React.ReactNode }) {
       <main className="mx-auto max-w-6xl px-6 py-10">{children}</main>
 
       <MiniPlayer />
+      <FullPlayer />
     </div>
   );
 }

@@ -12,6 +12,11 @@
   --woori-ink-hairline: rgba(10, 10, 10, 0.10);
   --woori-paper-hairline: rgba(246, 244, 239, 0.10);
 
+  /* Sticky header / 오버레이 배경 (반투명 — rgba 라 raw token 반전과 별개 정의 필요).
+     다크모드 시 어두운 카드 톤으로 자동 전환 (미디어쿼리 블록 참조). */
+  --woori-header-bg: rgba(246, 244, 239, 0.85);
+  --woori-overlay-bg: rgba(255, 255, 255, 0.92);
+
   /* 의미별 alias */
   --bg: var(--woori-paper);
   --bg-soft: var(--woori-paper);
@@ -60,6 +65,64 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   letter-spacing: -0.01em;
+}
+
+/* ─── Dark mode (system preference 기반) ──────────────────────
+ * Claude Design 2026-05-13 명세: 그라데이션 135° · #4A4A4A → #1A1A1A.
+ * 다크모드 사용자의 시스템 설정을 자동 추종 (수동 토글 없음).
+ *
+ * 전략: raw token(--woori-paper/--woori-white/--woori-ink) 자체를 반전.
+ * → 페이지 컴포넌트의 인라인 style이 var(--woori-paper)를 background로 쓰던 곳
+ *   (Header, MiniPlayer, /pair 등) 자동으로 다크 톤 카드로 변환.
+ * → color: var(--woori-ink) 같은 텍스트도 자동으로 paper 톤으로 반전.
+ * 단, 로고 SVG (`-paper`, `-dark` 변형)는 별도 자산이므로 영향 없음. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* raw token 반전 — 인라인 style 박힌 곳들 자동 적응 */
+    --woori-paper: #2A2A2A;       /* 라이트의 cream → 다크 카드 톤 */
+    --woori-white: #1F1F1F;        /* 라이트의 white → 더 어두운 elevated */
+    --woori-ink: #F6F4EF;          /* 라이트의 ink → paper (텍스트·마크) */
+    --woori-ink-subtle: rgba(246, 244, 239, 0.55);
+    --woori-paper-subtle: rgba(10, 10, 10, 0.55);
+    --woori-ink-hairline: rgba(246, 244, 239, 0.10);
+    --woori-paper-hairline: rgba(10, 10, 10, 0.10);
+
+    /* semantic alias */
+    --bg: transparent;             /* 그라데이션이 body 에서 직접 깔림 */
+    --bg-soft: var(--woori-paper);
+    --bg-elevated: var(--woori-white);
+    --text: var(--woori-ink);
+    --text-muted: var(--woori-ink-subtle);
+    --text-dim: rgba(246, 244, 239, 0.35);
+    --divider: var(--woori-ink-hairline);
+  }
+  body {
+    background: linear-gradient(135deg, #4A4A4A 0%, #1A1A1A 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+  /* Tailwind 의 bg-white/90 같이 박힌 곳도 다크 카드로 — 가장 흔한 패턴만 커버 */
+  .bg-white\/90,
+  .bg-white {
+    background-color: rgba(31, 31, 31, 0.92) !important;
+  }
+  .border-divider {
+    border-color: var(--woori-ink-hairline) !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* rgba 직접 박힌 sticky 헤더 / 오버레이 색을 다크로 override */
+    --woori-header-bg: rgba(31, 31, 31, 0.82);
+    --woori-overlay-bg: rgba(31, 31, 31, 0.92);
+  }
+  /* ink 마크 SVG (헤더·footer 로고)를 다크 모드에서 paper 톤으로 자동 반전.
+     invert(1) 이 #0A0A0A → ~#F5F5F5 로 변환 — paper(#F6F4EF) 와 시각적으로 거의 일치.
+     -paper / -dark variant SVG 별도 로드 없이 클래스 하나로 처리. */
+  .wm-logo-adaptive {
+    filter: invert(1);
+  }
 }
 
 /* 미니멀 톤 — 그라데이션은 거의 사용 안 함. 호환용 alias 만 유지. */
