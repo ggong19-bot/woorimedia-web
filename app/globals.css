@@ -166,3 +166,36 @@ body {
 .bg-woori-ink {
   color: var(--woori-paper);
 }
+
+/* ─── FullPlayer 스와이프 전환 애니메이션 (Flutter v22 미러) ──────
+ * AnimatedSwitcher 의 transitionBuilder 와 등가:
+ *   - 입장: dir 방향에서 22% width 위치 + opacity 0 → 중앙 + opacity 1
+ *   - 280ms, easeOutCubic
+ * 퇴장 측은 React key 변경으로 자연스럽게 unmount (exit 애니메이션 없음 — 충분히 자연스러움)
+ */
+@keyframes wm-swipe-in-right {
+  from {
+    transform: translateX(22%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes wm-swipe-in-left {
+  from {
+    transform: translateX(-22%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.wm-swipe-in-right {
+  animation: wm-swipe-in-right 280ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+.wm-swipe-in-left {
+  animation: wm-swipe-in-left 280ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}

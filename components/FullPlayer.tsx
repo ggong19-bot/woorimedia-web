@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { fmt, usePlayer } from "@/lib/player_context";
 
 // 전체 화면 플레이어 — 미니플레이어 탭 시 확장. Ink/Paper 톤, 그라데이션/그림자 없음.
 // 맥(Flutter) full_player.dart 구조 미러링: 상단바 / 커버 마크 / 트랙정보 /
 // 진행바 / 큰 컨트롤 / 셔플·반복 / UP NEXT 큐.
+// 트랙 변경 시 슬라이드+페이드 전환 (Flutter v22 와 동일 UX) — globals.css 의
+// wm-swipe-in-{right,left} 키프레임 + cur.id 키 변경으로 remount 트리거.
 
 // 스와이프 임계값: 가로 60px 이상 이동 + 세로 변동 50% 미만이면 horizontal swipe 인정.
 // Flutter onHorizontalDragEnd 의 velocity 300 px/s 와 체감 유사 (터치 ~0.2s 기준).
@@ -16,6 +18,8 @@ export default function FullPlayer() {
   const p = usePlayer();
   const cur = p.current();
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  // 1 = 다음(좌→우 슬라이드 인), -1 = 이전. 자동 진행도 1 로 기본.
+  const [swipeDir, setSwipeDir] = useState<1 | -1>(1);
 
   if (!p.fullOpen || !cur || !p.album) return null;
 
@@ -44,8 +48,13 @@ export default function FullPlayer() {
     const dy = t.clientY - start.y;
     // 세로 변동이 가로의 절반 이상이면 수직 스크롤로 간주 — 무시
     if (Math.abs(dy) > Math.abs(dx) * 0.5) return;
-    if (dx <= -SWIPE_THRESHOLD) p.next();
-    else if (dx >= SWIPE_THRESHOLD) p.prev();
+    if (dx <= -SWIPE_THRESHOLD) {
+      setSwipeDir(1);
+      p.next();
+    } else if (dx >= SWIPE_THRESHOLD) {
+      setSwipeDir(-1);
+      p.prev();
+    }
   }
 
   const upcoming = p.queue.length - p.currentIndex - 1;
@@ -100,46 +109,51 @@ export default function FullPlayer() {
           </IconButton>
         </div>
 
-        {/* ─── 커버 — 브랜드 마크, 솔리드 + hairline ─── */}
-        <div className="flex justify-center px-2 pb-6 pt-4">
-          <div
-            className="flex aspect-square w-full max-w-[280px] items-center justify-center"
-            style={{
-              background: "var(--woori-paper)",
-              border: "1px solid var(--woori-ink-hairline)",
-            }}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="96"
-              height="96"
-              fill="none"
-              stroke="var(--woori-ink)"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-label="WooriMedia"
+        {/* ─── 커버 + 트랙 정보 — cur.id 키로 트랙 변경 시 슬라이드+페이드 ─── */}
+        <div
+          key={cur.id}
+          className={swipeDir === 1 ? "wm-swipe-in-right" : "wm-swipe-in-left"}
+        >
+          <div className="flex justify-center px-2 pb-6 pt-4">
+            <div
+              className="flex aspect-square w-full max-w-[280px] items-center justify-center"
+              style={{
+                background: "var(--woori-paper)",
+                border: "1px solid var(--woori-ink-hairline)",
+              }}
             >
-              <circle cx="12" cy="12" r="9" />
-              <path d="M9 8 L11 16 L13 11 L15 16 L17 8" />
-            </svg>
+              <svg
+                viewBox="0 0 24 24"
+                width="96"
+                height="96"
+                fill="none"
+                stroke="var(--woori-ink)"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-label="WooriMedia"
+              >
+                <circle cx="12" cy="12" r="9" />
+                <path d="M9 8 L11 16 L13 11 L15 16 L17 8" />
+              </svg>
+            </div>
           </div>
-        </div>
 
-        {/* ─── 트랙 정보 ─── */}
-        <div className="px-2 text-center">
-          <h1
-            className="truncate text-xl font-extrabold"
-            style={{ color: "var(--woori-ink)" }}
-          >
-            {cur.title}
-          </h1>
-          <p
-            className="mt-1 truncate text-sm"
-            style={{ color: "var(--woori-ink-subtle)" }}
-          >
-            {cur.artist} · {p.album.title}
-          </p>
+          {/* ─── 트랙 정보 ─── */}
+          <div className="px-2 text-center">
+            <h1
+              className="truncate text-xl font-extrabold"
+              style={{ color: "var(--woori-ink)" }}
+            >
+              {cur.title}
+            </h1>
+            <p
+              className="mt-1 truncate text-sm"
+              style={{ color: "var(--woori-ink-subtle)" }}
+            >
+              {cur.artist} · {p.album.title}
+            </p>
+          </div>
         </div>
 
         {/* ─── 진행 바 + 시간 ─── */}
@@ -175,9 +189,16 @@ export default function FullPlayer() {
           </div>
         </div>
 
-        {/* ─── 메인 컨트롤 ─── */}
+        {/* ─── 메인 컨트롤 ─ swipeDir 셋팅으로 버튼 클릭도 동일 슬라이드 효과 ─── */}
         <div className="flex items-center justify-center gap-6 pt-6">
-          <IconButton onClick={() => p.prev()} ariaLabel="이전" big>
+          <IconButton
+            onClick={() => {
+              setSwipeDir(-1);
+              p.prev();
+            }}
+            ariaLabel="이전"
+            big
+          >
             <PrevIcon />
           </IconButton>
           <button
@@ -192,7 +213,14 @@ export default function FullPlayer() {
           >
             {p.isPlaying ? <PauseIcon big /> : <PlayIcon big />}
           </button>
-          <IconButton onClick={() => p.next()} ariaLabel="다음" big>
+          <IconButton
+            onClick={() => {
+              setSwipeDir(1);
+              p.next();
+            }}
+            ariaLabel="다음"
+            big
+          >
             <NextIcon />
           </IconButton>
         </div>
