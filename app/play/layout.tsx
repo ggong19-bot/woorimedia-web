@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "@/lib/auth_context";
 import { PlayerProvider } from "@/lib/player_context";
 import MiniPlayer from "@/components/MiniPlayer";
 import FullPlayer from "@/components/FullPlayer";
+import TvBackHandler from "@/components/TvBackHandler";
 
 function PlayInner({ children }: { children: React.ReactNode }) {
   const { user, ready, signOut } = useAuth();
@@ -101,6 +102,7 @@ function PlayInner({ children }: { children: React.ReactNode }) {
 
       <MiniPlayer />
       <FullPlayer />
+      <TvBackHandler />
     </div>
   );
 }
