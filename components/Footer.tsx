@@ -14,9 +14,23 @@ export default function Footer() {
     PLAYER_PATHS.some((p) => path === p || path.startsWith(p + "/"));
   if (hideChrome) return null;
 
+  // 헤딩·hover 톤은 ink 단색 + opacity 로 통일 (옛 gold/navy alias 제거).
+  const headingStyle = {
+    color: "var(--woori-ink)",
+    letterSpacing: "0.22em",
+  } as const;
+  const linkClass =
+    "transition hover:opacity-100 opacity-[0.62]";
+
   return (
-    <footer className="border-t border-divider/60 bg-bg-soft">
-      <div className="mx-auto max-w-6xl px-6 py-12">
+    <footer
+      className="border-t"
+      style={{
+        borderColor: "var(--woori-ink-hairline)",
+        background: "var(--woori-paper)",
+      }}
+    >
+      <div className="mx-auto max-w-6xl px-6 py-14">
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
             <Image
@@ -36,25 +50,31 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-xs font-extrabold uppercase tracking-widest text-gold-deep">
+            <h4
+              className="text-xs font-medium uppercase"
+              style={headingStyle}
+            >
               제품
             </h4>
-            <ul className="mt-4 space-y-2 text-sm text-text-muted">
+            <ul
+              className="mt-5 space-y-3 text-sm"
+              style={{ color: "var(--woori-ink)" }}
+            >
               <li>
-                <Link href="/product" className="hover:text-navy-deep">
+                <Link href="/product" className={linkClass}>
                   제품 개요
                 </Link>
               </li>
               <li>
                 <a
                   href="https://play.woori-media.com"
-                  className="hover:text-navy-deep"
+                  className={linkClass}
                 >
                   웹 플레이어
                 </a>
               </li>
               <li>
-                <Link href="/partners" className="hover:text-navy-deep">
+                <Link href="/partners" className={linkClass}>
                   파트너 발주
                 </Link>
               </li>
@@ -62,24 +82,30 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-xs font-extrabold uppercase tracking-widest text-gold-deep">
+            <h4
+              className="text-xs font-medium uppercase"
+              style={headingStyle}
+            >
               회사
             </h4>
-            <ul className="mt-4 space-y-2 text-sm text-text-muted">
+            <ul
+              className="mt-5 space-y-3 text-sm"
+              style={{ color: "var(--woori-ink)" }}
+            >
               <li>
-                <Link href="/company" className="hover:text-navy-deep">
+                <Link href="/company" className={linkClass}>
                   우리미디어 소개
                 </Link>
               </li>
               <li>
-                <Link href="/support" className="hover:text-navy-deep">
+                <Link href="/support" className={linkClass}>
                   고객 지원
                 </Link>
               </li>
               <li>
                 <a
                   href="mailto:contact@woorimedia.com"
-                  className="hover:text-navy-deep"
+                  className={linkClass}
                 >
                   contact@woorimedia.com
                 </a>
@@ -88,15 +114,22 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-divider/60 pt-6 text-xs text-text-dim md:flex-row md:items-center">
-          <p>© 2026 WooriMedia. All rights reserved.</p>
+        <div
+          className="mt-14 flex flex-col items-start justify-between gap-3 border-t pt-6 text-xs md:flex-row md:items-center"
+          style={{
+            borderColor: "var(--woori-ink-hairline)",
+            color: "var(--woori-ink-subtle)",
+          }}
+        >
+          <p>© 2026 WOORIMEDIA Co., Ltd.</p>
           <div className="flex gap-5">
-            <Link href="/support#terms" className="hover:text-navy-deep">
-              이용약관
+            <Link href="/privacy" className={linkClass}>
+              Privacy
             </Link>
-            <Link href="/support#privacy" className="hover:text-navy-deep">
-              개인정보처리방침
+            <Link href="/terms" className={linkClass}>
+              Terms
             </Link>
+            <span>woori-media.com</span>
           </div>
         </div>
       </div>
