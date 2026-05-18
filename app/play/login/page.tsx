@@ -116,14 +116,14 @@ export default function PlayLoginPage() {
               placeholder="이메일"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/40 outline-none focus:border-gold-main"
+              className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/40 outline-none focus:border-white/60"
             />
             <input
               type="password"
               placeholder={signUp ? "비밀번호 (8자 이상)" : "비밀번호"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/40 outline-none focus:border-gold-main"
+              className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/40 outline-none focus:border-white/60"
             />
             {signUp && (
               <>
@@ -132,14 +132,14 @@ export default function PlayLoginPage() {
                   placeholder="비밀번호 확인"
                   value={pwConfirm}
                   onChange={(e) => setPwConfirm(e.target.value)}
-                  className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/40 outline-none focus:border-gold-main"
+                  className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/40 outline-none focus:border-white/60"
                 />
                 <input
                   type="text"
                   placeholder="닉네임 (선택)"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/40 outline-none focus:border-gold-main"
+                  className="h-12 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/40 outline-none focus:border-white/60"
                 />
               </>
             )}
@@ -151,7 +151,11 @@ export default function PlayLoginPage() {
             <button
               onClick={goEmail}
               disabled={!email || busy === "email"}
-              className="h-12 w-full rounded-xl bg-gold-main text-sm font-extrabold text-navy-deep transition hover:brightness-105 disabled:opacity-60"
+              className="h-12 w-full rounded-xl text-sm font-bold transition hover:opacity-90 disabled:opacity-60"
+              style={{
+                background: "var(--woori-paper)",
+                color: "var(--woori-ink)",
+              }}
             >
               {busy === "email"
                 ? "잠시만요…"
@@ -165,7 +169,7 @@ export default function PlayLoginPage() {
                   setSignUp((s) => !s);
                   setErrMsg(null);
                 }}
-                className="text-gold-light hover:underline"
+                className="text-white/80 hover:text-white hover:underline"
               >
                 {signUp
                   ? "이미 계정이 있어요 — 로그인"
@@ -199,7 +203,7 @@ export default function PlayLoginPage() {
                 setEmailMode(true);
                 setSignUp(true);
               }}
-              className="text-sm font-extrabold text-gold-light hover:underline"
+              className="text-sm font-bold text-white/80 hover:text-white hover:underline"
             >
               회원가입
             </button>

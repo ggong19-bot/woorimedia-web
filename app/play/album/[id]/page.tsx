@@ -6,6 +6,7 @@ import { api, ApiError } from "@/lib/api";
 import { fmt, usePlayer } from "@/lib/player_context";
 import type { AlbumDetail, Track } from "@/lib/types";
 import { PlaylistStore, type Playlist } from "@/lib/playlist_store";
+import Mark from "@/components/Mark";
 
 export default function PlayAlbumPage({
   params,
@@ -48,7 +49,12 @@ export default function PlayAlbumPage({
   if (error) {
     return (
       <div className="py-20 text-center">
-        <p className="text-sm text-text-muted">{error}</p>
+        <p
+          className="text-sm"
+          style={{ color: "var(--woori-ink-subtle)" }}
+        >
+          {error}
+        </p>
         <button
           onClick={() => router.push("/play")}
           className="mt-4 rounded-full border border-divider px-4 py-2 text-sm"
@@ -71,26 +77,54 @@ export default function PlayAlbumPage({
 
   return (
     <div>
-      {/* Hero */}
-      <section className="bg-navy-gradient -mx-6 mb-8 px-6 py-12 md:-mx-6">
+      {/* Hero — dark 톤 (ink bg + paper text) — 라이트/다크 모드 동일 */}
+      <section
+        className="-mx-6 mb-8 px-6 py-12 md:-mx-6"
+        style={{ background: "var(--woori-ink)", color: "var(--woori-paper)" }}
+      >
         <div className="flex flex-col gap-8 md:flex-row md:items-end">
-          <div className="bg-gold-gradient flex aspect-square w-48 shrink-0 items-center justify-center rounded-2xl shadow-2xl shadow-navy-deep/40 md:w-56">
-            <span className="text-7xl text-navy-deep">♪</span>
+          {/* 커버 자리 — 브랜드 마크 (그라데이션 placeholder, paper 마크 워터마크) */}
+          <div
+            className="flex aspect-square w-48 shrink-0 items-center justify-center md:w-56"
+            style={{
+              background: "linear-gradient(150deg, #2a2a2a, #0a0a0a)",
+              color: "var(--woori-paper)",
+            }}
+          >
+            <span style={{ width: 96, height: 96, opacity: 0.85 }}>
+              <Mark />
+            </span>
           </div>
           <div className="flex-1">
             {album.edition?.label && (
-              <span className="inline-flex items-center gap-1 rounded bg-gold-gradient px-2 py-1 text-[11px] font-extrabold text-navy-deep">
-                ★ {album.edition.label} #{album.edition.number}/
+              <span
+                className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-medium uppercase"
+                style={{
+                  background: "var(--woori-paper)",
+                  color: "var(--woori-ink)",
+                  letterSpacing: "0.16em",
+                }}
+              >
+                {album.edition.label} #{album.edition.number}/
                 {album.edition.total}
               </span>
             )}
-            <p className="mt-3 text-sm font-semibold text-white/85">
+            <p
+              className="mt-3 text-sm font-semibold"
+              style={{ color: "rgba(246,244,239,0.85)" }}
+            >
               {album.artist}
             </p>
-            <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white md:text-5xl">
+            <h1
+              className="text-4xl font-extrabold leading-tight tracking-tight md:text-5xl"
+              style={{ color: "var(--woori-paper)" }}
+            >
               {album.title}
             </h1>
-            <p className="mt-3 text-sm text-white/60">
+            <p
+              className="mt-3 text-sm"
+              style={{ color: "rgba(246,244,239,0.6)" }}
+            >
               {album.audioSpec.format} · {album.audioSpec.bitDepth}-bit ·{" "}
               {Math.round(album.audioSpec.sampleRateHz / 1000)}kHz ·{" "}
               {album.tracks.length}곡
@@ -99,7 +133,11 @@ export default function PlayAlbumPage({
             <div className="mt-6 flex gap-3">
               <button
                 onClick={() => play(0)}
-                className="bg-gold-gradient inline-flex h-11 items-center rounded-full px-6 text-sm font-extrabold text-navy-deep shadow-lg shadow-gold-main/30 transition hover:brightness-110"
+                className="inline-flex h-11 items-center rounded-full px-6 text-sm font-bold transition hover:opacity-90"
+                style={{
+                  background: "var(--woori-paper)",
+                  color: "var(--woori-ink)",
+                }}
               >
                 ▶ 처음부터 재생
               </button>
@@ -112,7 +150,12 @@ export default function PlayAlbumPage({
                   );
                   if (!player.shuffle) player.toggleShuffle();
                 }}
-                className="inline-flex h-11 items-center rounded-full border border-white/20 bg-white/10 px-6 text-sm font-extrabold text-white backdrop-blur transition hover:bg-white/20"
+                className="inline-flex h-11 items-center rounded-full border px-6 text-sm font-bold transition hover:opacity-90"
+                style={{
+                  borderColor: "rgba(246,244,239,0.3)",
+                  background: "rgba(246,244,239,0.05)",
+                  color: "var(--woori-paper)",
+                }}
               >
                 ⇄ 셔플 재생
               </button>
@@ -123,37 +166,57 @@ export default function PlayAlbumPage({
 
       {/* Track list */}
       <section>
-        <ul className="overflow-hidden rounded-2xl border border-divider bg-white">
+        <ul
+          className="overflow-hidden border"
+          style={{
+            borderColor: "var(--woori-ink-hairline)",
+            background: "var(--woori-white)",
+          }}
+        >
           {album.tracks.map((t) => {
             const isCur = playing?.id === t.id;
             return (
               <li
                 key={t.id}
-                className={`flex cursor-pointer items-center gap-4 border-b border-divider px-5 py-3 last:border-b-0 transition ${
-                  isCur ? "bg-gold-main/10" : "hover:bg-bg-soft"
-                }`}
+                className="flex cursor-pointer items-center gap-4 border-b px-5 py-3 transition last:border-b-0"
+                style={{
+                  borderColor: "var(--woori-ink-hairline)",
+                  background: isCur
+                    ? "rgba(10,10,10,0.04)"
+                    : "transparent",
+                }}
                 onClick={() =>
                   play(album.tracks.findIndex((x) => x.id === t.id))
                 }
               >
                 <span
-                  className={`w-7 text-center font-mono text-sm font-bold ${
-                    isCur ? "text-gold-deep" : "text-text-muted"
-                  }`}
+                  className="w-7 text-center font-mono text-sm font-bold"
+                  style={{
+                    color: isCur
+                      ? "var(--woori-ink)"
+                      : "var(--woori-ink-subtle)",
+                  }}
                 >
                   {isCur ? (player.isPlaying ? "▶" : "⏸") : t.trackNumber}
                 </span>
                 <div className="flex-1 truncate">
                   <p
-                    className={`truncate text-sm font-extrabold ${
-                      isCur ? "text-gold-deep" : "text-navy-deep"
-                    }`}
+                    className="truncate text-sm font-bold"
+                    style={{ color: "var(--woori-ink)" }}
                   >
                     {t.title}
                   </p>
-                  <p className="truncate text-xs text-text-muted">{t.artist}</p>
+                  <p
+                    className="truncate text-xs"
+                    style={{ color: "var(--woori-ink-subtle)" }}
+                  >
+                    {t.artist}
+                  </p>
                 </div>
-                <span className="font-mono text-xs text-text-muted">
+                <span
+                  className="font-mono text-xs"
+                  style={{ color: "var(--woori-ink-subtle)" }}
+                >
                   {fmt(t.durationSeconds)}
                 </span>
                 <button
@@ -161,7 +224,11 @@ export default function PlayAlbumPage({
                     e.stopPropagation();
                     setAddToPlaylistTrack(t);
                   }}
-                  className="flex h-7 w-7 items-center justify-center rounded-full text-text-muted transition hover:bg-bg-soft hover:text-navy-deep"
+                  className="flex h-7 w-7 items-center justify-center rounded-full transition hover:opacity-100"
+                  style={{
+                    color: "var(--woori-ink-subtle)",
+                    opacity: 0.6,
+                  }}
                   aria-label="플레이리스트에 추가"
                   title="플레이리스트에 추가"
                 >
@@ -173,11 +240,18 @@ export default function PlayAlbumPage({
         </ul>
       </section>
 
-      <div className="mt-8 rounded-xl border border-divider bg-white p-5 text-xs text-text-muted">
-        <strong className="text-navy-deep">스트리밍 안내:</strong> 음원 데이터는
-        백엔드의 활성화 검증을 통과한 사용자에게만 발급됩니다. 현재 프리뷰는
-        메타데이터 + 미니플레이어 시뮬레이션으로 구성되어 있으며, 실제 오디오
-        디코딩은 다음 단계에서 추가됩니다.
+      <div
+        className="mt-8 border p-5 text-xs"
+        style={{
+          borderColor: "var(--woori-ink-hairline)",
+          background: "var(--woori-white)",
+          color: "var(--woori-ink-subtle)",
+        }}
+      >
+        <strong style={{ color: "var(--woori-ink)" }}>스트리밍 안내:</strong>{" "}
+        음원 데이터는 백엔드의 활성화 검증을 통과한 사용자에게만 발급됩니다.
+        현재 프리뷰는 메타데이터 + 미니플레이어 시뮬레이션으로 구성되어 있으며,
+        실제 오디오 디코딩은 다음 단계에서 추가됩니다.
       </div>
 
       {addToPlaylistTrack && (
@@ -354,26 +428,57 @@ function AddToPlaylistSheet({
 function AlbumSkeleton() {
   return (
     <div>
-      <section className="bg-navy-gradient -mx-6 mb-8 px-6 py-12">
+      <section
+        className="-mx-6 mb-8 px-6 py-12"
+        style={{ background: "var(--woori-ink)" }}
+      >
         <div className="flex flex-col gap-8 md:flex-row md:items-end">
-          <div className="aspect-square w-48 shrink-0 animate-pulse rounded-2xl bg-white/10 md:w-56" />
+          <div
+            className="aspect-square w-48 shrink-0 animate-pulse md:w-56"
+            style={{ background: "rgba(246,244,239,0.1)" }}
+          />
           <div className="flex-1 space-y-3">
-            <div className="h-5 w-32 animate-pulse rounded bg-white/15" />
-            <div className="h-10 w-2/3 animate-pulse rounded bg-white/15" />
-            <div className="h-3 w-1/2 animate-pulse rounded bg-white/10" />
+            <div
+              className="h-5 w-32 animate-pulse"
+              style={{ background: "rgba(246,244,239,0.15)" }}
+            />
+            <div
+              className="h-10 w-2/3 animate-pulse"
+              style={{ background: "rgba(246,244,239,0.15)" }}
+            />
+            <div
+              className="h-3 w-1/2 animate-pulse"
+              style={{ background: "rgba(246,244,239,0.1)" }}
+            />
           </div>
         </div>
       </section>
-      <ul className="overflow-hidden rounded-2xl border border-divider bg-white">
+      <ul
+        className="overflow-hidden border"
+        style={{
+          borderColor: "var(--woori-ink-hairline)",
+          background: "var(--woori-white)",
+        }}
+      >
         {Array.from({ length: 6 }).map((_, i) => (
           <li
             key={i}
-            className="flex items-center gap-4 border-b border-divider px-5 py-3 last:border-b-0"
+            className="flex items-center gap-4 border-b px-5 py-3 last:border-b-0"
+            style={{ borderColor: "var(--woori-ink-hairline)" }}
           >
-            <div className="h-4 w-4 animate-pulse rounded bg-bg-soft" />
+            <div
+              className="h-4 w-4 animate-pulse"
+              style={{ background: "var(--woori-paper-soft, #ECE9E1)" }}
+            />
             <div className="flex-1 space-y-1">
-              <div className="h-3 w-1/2 animate-pulse rounded bg-bg-soft" />
-              <div className="h-2 w-1/3 animate-pulse rounded bg-bg-soft" />
+              <div
+                className="h-3 w-1/2 animate-pulse"
+                style={{ background: "var(--woori-paper-soft, #ECE9E1)" }}
+              />
+              <div
+                className="h-2 w-1/3 animate-pulse"
+                style={{ background: "var(--woori-paper-soft, #ECE9E1)" }}
+              />
             </div>
           </li>
         ))}

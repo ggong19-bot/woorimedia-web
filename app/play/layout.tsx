@@ -59,7 +59,8 @@ function PlayInner({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="hidden text-sm font-semibold text-text-muted hover:text-navy-deep md:inline-block"
+              className="hidden text-sm font-semibold transition hover:opacity-100 md:inline-block"
+              style={{ color: "var(--woori-ink-subtle)" }}
             >
               홈으로
             </Link>
@@ -90,7 +91,11 @@ function PlayInner({ children }: { children: React.ReactNode }) {
               onClick={async () => {
                 await signOut();
               }}
-              className="rounded-full border border-divider px-3 py-1.5 text-xs font-bold text-text-muted hover:border-navy-deep hover:text-navy-deep"
+              className="rounded-full border px-3 py-1.5 text-xs font-bold transition hover:opacity-90"
+              style={{
+                borderColor: "var(--woori-ink-hairline)",
+                color: "var(--woori-ink-subtle)",
+              }}
             >
               로그아웃
             </button>
