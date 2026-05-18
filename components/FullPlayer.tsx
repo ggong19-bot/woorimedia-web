@@ -1,15 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import { useRef } from "react";
 import { fmt, usePlayer } from "@/lib/player_context";
 
 // 전체 화면 플레이어 — 미니플레이어 탭 시 확장. Ink/Paper 톤, 그라데이션/그림자 없음.
 // 맥(Flutter) full_player.dart 구조 미러링: 상단바 / 커버 마크 / 트랙정보 /
 // 진행바 / 큰 컨트롤 / 셔플·반복 / UP NEXT 큐.
 
+// 스와이프 임계값: 가로 60px 이상 이동 + 세로 변동 50% 미만이면 horizontal swipe 인정.
+// Flutter onHorizontalDragEnd 의 velocity 300 px/s 와 체감 유사 (터치 ~0.2s 기준).
+const SWIPE_THRESHOLD = 60;
+
 export default function FullPlayer() {
   const p = usePlayer();
   const cur = p.current();
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   if (!p.fullOpen || !cur || !p.album) return null;
 
@@ -22,6 +28,26 @@ export default function FullPlayer() {
     p.seek(ratio * (p.duration || total));
   }
 
+  // 스와이프 — 좌측 (dx < -threshold) → next, 우측 (> threshold) → prev.
+  // touchstart/touchend 만 사용 (touchmove 없이) — 단순·가벼움. seek 슬라이더/버튼은
+  // stopPropagation 으로 자기 이벤트 먼저 claim 하므로 충돌 없음.
+  function onTouchStart(e: React.TouchEvent) {
+    const t = e.changedTouches[0];
+    touchStart.current = { x: t.clientX, y: t.clientY };
+  }
+  function onTouchEnd(e: React.TouchEvent) {
+    const start = touchStart.current;
+    touchStart.current = null;
+    if (!start) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
+    // 세로 변동이 가로의 절반 이상이면 수직 스크롤로 간주 — 무시
+    if (Math.abs(dy) > Math.abs(dx) * 0.5) return;
+    if (dx <= -SWIPE_THRESHOLD) p.next();
+    else if (dx >= SWIPE_THRESHOLD) p.prev();
+  }
+
   const upcoming = p.queue.length - p.currentIndex - 1;
 
   return (
@@ -30,6 +56,8 @@ export default function FullPlayer() {
       style={{ background: "var(--woori-paper)" }}
       role="dialog"
       aria-label="전체 화면 플레이어"
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
     >
       <div className="mx-auto flex min-h-full max-w-xl flex-col px-6 pb-16">
         {/* ─── 상단 바 ─── */}

@@ -50,12 +50,24 @@ export default function PlayLibraryPage() {
               : `등록된 한정판 USB · ${albums.length}장`}
           </p>
         </div>
-        <button
-          onClick={() => setShowActivate(true)}
-          className="rounded-full bg-gold-gradient px-5 py-2.5 text-sm font-extrabold text-navy-deep transition hover:brightness-110"
-        >
-          + 시리얼 등록
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/play/playlists"
+            className="inline-flex h-10 items-center rounded-full border px-4 text-sm font-bold transition hover:opacity-90"
+            style={{
+              borderColor: "var(--woori-ink-hairline)",
+              color: "var(--woori-ink)",
+            }}
+          >
+            ▶ 내 플레이리스트
+          </Link>
+          <button
+            onClick={() => setShowActivate(true)}
+            className="rounded-full bg-gold-gradient px-5 py-2.5 text-sm font-extrabold text-navy-deep transition hover:brightness-110"
+          >
+            + 시리얼 등록
+          </button>
+        </div>
       </div>
 
       {error && (

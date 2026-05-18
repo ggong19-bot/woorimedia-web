@@ -21,6 +21,9 @@ export type Track = {
   artist: string;
   durationSeconds: number;
   hasLyrics?: boolean;
+  // 플레이리스트(크로스앨범 큐) 에서 트랙이 어느 앨범 출신인지. 단일 앨범 재생 시 undefined.
+  // 재생 효과가 이 값 우선, 없으면 s.album?.id 로 fallback.
+  sourceAlbumId?: string;
 };
 
 export type LibraryAlbum = {

@@ -4,7 +4,8 @@ import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api, ApiError } from "@/lib/api";
 import { fmt, usePlayer } from "@/lib/player_context";
-import type { AlbumDetail } from "@/lib/types";
+import type { AlbumDetail, Track } from "@/lib/types";
+import { PlaylistStore, type Playlist } from "@/lib/playlist_store";
 
 export default function PlayAlbumPage({
   params,
@@ -14,6 +15,7 @@ export default function PlayAlbumPage({
   const { id } = use(params);
   const [album, setAlbum] = useState<AlbumDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [addToPlaylistTrack, setAddToPlaylistTrack] = useState<Track | null>(null);
   const player = usePlayer();
   const router = useRouter();
 
@@ -154,6 +156,17 @@ export default function PlayAlbumPage({
                 <span className="font-mono text-xs text-text-muted">
                   {fmt(t.durationSeconds)}
                 </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setAddToPlaylistTrack(t);
+                  }}
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-text-muted transition hover:bg-bg-soft hover:text-navy-deep"
+                  aria-label="플레이리스트에 추가"
+                  title="플레이리스트에 추가"
+                >
+                  +
+                </button>
               </li>
             );
           })}
@@ -165,6 +178,174 @@ export default function PlayAlbumPage({
         백엔드의 활성화 검증을 통과한 사용자에게만 발급됩니다. 현재 프리뷰는
         메타데이터 + 미니플레이어 시뮬레이션으로 구성되어 있으며, 실제 오디오
         디코딩은 다음 단계에서 추가됩니다.
+      </div>
+
+      {addToPlaylistTrack && (
+        <AddToPlaylistSheet
+          albumId={album.id}
+          track={addToPlaylistTrack}
+          onClose={() => setAddToPlaylistTrack(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+// 플레이리스트 추가 시트 — 기존 목록 선택 or 새로 만들기.
+function AddToPlaylistSheet({
+  albumId,
+  track,
+  onClose,
+}: {
+  albumId: string;
+  track: Track;
+  onClose: () => void;
+}) {
+  const [list, setList] = useState<Playlist[]>([]);
+  const [creating, setCreating] = useState(false);
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    return PlaylistStore.subscribe(setList);
+  }, []);
+
+  function addTo(playlistId: string) {
+    PlaylistStore.addEntry(playlistId, {
+      albumId,
+      trackId: track.id,
+      titleSnapshot: track.title,
+      artistSnapshot: track.artist,
+      durationSecondsSnapshot: track.durationSeconds,
+    });
+    onClose();
+  }
+
+  function createAndAdd() {
+    const n = name.trim();
+    if (!n) return;
+    const p = PlaylistStore.create(n);
+    addTo(p.id);
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-30 flex items-end justify-center bg-black/40 sm:items-center"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-t-2xl bg-white p-5 sm:rounded-2xl"
+        style={{ background: "var(--woori-paper)" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2
+          className="text-lg font-extrabold"
+          style={{ color: "var(--woori-ink)" }}
+        >
+          플레이리스트에 추가
+        </h2>
+        <p
+          className="mt-1 truncate text-xs"
+          style={{ color: "var(--woori-ink-subtle)" }}
+        >
+          {track.title} · {track.artist}
+        </p>
+
+        {creating ? (
+          <div className="mt-4">
+            <input
+              autoFocus
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") createAndAdd();
+                if (e.key === "Escape") {
+                  setCreating(false);
+                  setName("");
+                }
+              }}
+              placeholder="새 플레이리스트 이름"
+              className="w-full border-b bg-transparent py-2 text-base outline-none"
+              style={{
+                borderColor: "var(--woori-ink-hairline)",
+                color: "var(--woori-ink)",
+              }}
+            />
+            <div className="mt-3 flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  setCreating(false);
+                  setName("");
+                }}
+                className="rounded-full px-4 py-1.5 text-sm font-semibold"
+                style={{ color: "var(--woori-ink-subtle)" }}
+              >
+                취소
+              </button>
+              <button
+                onClick={createAndAdd}
+                disabled={!name.trim()}
+                className="rounded-full px-4 py-1.5 text-sm font-bold disabled:opacity-40"
+                style={{
+                  background: "var(--woori-ink)",
+                  color: "var(--woori-paper)",
+                }}
+              >
+                만들고 추가
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <button
+              onClick={() => setCreating(true)}
+              className="mt-4 w-full rounded-md border-2 border-dashed py-3 text-sm font-bold transition hover:opacity-80"
+              style={{
+                borderColor: "var(--woori-ink-hairline)",
+                color: "var(--woori-ink)",
+              }}
+            >
+              + 새 플레이리스트 만들기
+            </button>
+            {list.length > 0 && (
+              <ul
+                className="mt-4 max-h-80 divide-y overflow-y-auto"
+                style={{ borderColor: "var(--woori-ink-hairline)" }}
+              >
+                {list.map((p) => (
+                  <li
+                    key={p.id}
+                    style={{ borderColor: "var(--woori-ink-hairline)" }}
+                  >
+                    <button
+                      onClick={() => addTo(p.id)}
+                      className="flex w-full items-center justify-between py-3 text-left transition hover:opacity-80"
+                    >
+                      <span
+                        className="truncate text-sm font-semibold"
+                        style={{ color: "var(--woori-ink)" }}
+                      >
+                        {p.name}
+                      </span>
+                      <span
+                        className="text-xs"
+                        style={{ color: "var(--woori-ink-subtle)" }}
+                      >
+                        {p.entries.length} 곡
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <button
+              onClick={onClose}
+              className="mt-5 w-full rounded-full py-2.5 text-sm font-bold"
+              style={{ color: "var(--woori-ink-subtle)" }}
+            >
+              닫기
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

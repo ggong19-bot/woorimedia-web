@@ -176,6 +176,67 @@ export const api = {
       body: { albumId, trackId },
     }),
 
+  // ── 플레이리스트 sync (선택, 인증 필요). 실패해도 로컬은 그대로 동작 ──
+  // 디바이스 간 동기화 — 백엔드 endpoints (migrations/2026_05_18_playlists.sql).
+  getPlaylists: () =>
+    request<{
+      playlists: Array<{
+        id: string;
+        name: string;
+        createdAt: string;
+        updatedAt: string;
+        entries: Array<{
+          position: number;
+          albumId: string;
+          trackId: string;
+          titleSnapshot?: string | null;
+          artistSnapshot?: string | null;
+          durationSecondsSnapshot?: number | null;
+        }>;
+      }>;
+    }>("/v1/me/playlists"),
+
+  putPlaylist: (p: {
+    id: string;
+    name: string;
+    entries: Array<{
+      position: number;
+      albumId: string;
+      trackId: string;
+      titleSnapshot?: string | null;
+      artistSnapshot?: string | null;
+      durationSecondsSnapshot?: number | null;
+    }>;
+  }) =>
+    request<{ id: string; name: string; updatedAt: string }>(
+      `/v1/me/playlists/${encodeURIComponent(p.id)}`,
+      { method: "PUT", body: p },
+    ),
+
+  deletePlaylist: (id: string) =>
+    request<void>(`/v1/me/playlists/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    }),
+
+  syncPlaylists: (
+    playlists: Array<{
+      id: string;
+      name: string;
+      entries: Array<{
+        position: number;
+        albumId: string;
+        trackId: string;
+        titleSnapshot?: string | null;
+        artistSnapshot?: string | null;
+        durationSecondsSnapshot?: number | null;
+      }>;
+    }>,
+  ) =>
+    request<{ success: number; failed: Array<{ id: string; reason: string }> }>(
+      "/v1/me/playlists/sync",
+      { method: "POST", body: { playlists } },
+    ),
+
   // TV / 헤드리스 device_code flow — 폰 측 인증 (인증 필요).
   // userCode 만 보내면 미리보기 (preview=true), approve true/false 면 승인/거부.
   verifyDeviceCode: (userCode: string, approve?: boolean) =>

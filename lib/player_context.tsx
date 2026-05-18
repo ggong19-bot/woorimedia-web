@@ -28,6 +28,16 @@ type PlayerState = {
 
 type PlayerContextValue = PlayerState & {
   setQueue: (album: Album, startIndex: number) => void;
+  /**
+   * 크로스앨범 플레이리스트 재생. 합성 Album (id='playlist:<id>') 을 만들어
+   * 큐에 올린다. 각 track 의 sourceAlbumId 가 stream fetch 시 실제 앨범 ID
+   * 로 사용됨. 라이브러리에 등록되지 않은 앨범의 트랙은 제외 후 호출 권장.
+   */
+  setPlaylistQueue: (
+    playlist: { id: string; name: string },
+    tracks: Track[],
+    startIndex: number,
+  ) => void;
   togglePlay: () => void;
   next: () => void;
   prev: () => void;
@@ -130,7 +140,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
     // 우선 stream-decrypt proxy 시도 (보안 모델: .wm 만 storage 에 보관).
     // 실패 시 옛 audioUrl 로 fallback (평문 wav 있는 데모1 같은 경우).
-    const albumId = s.album.id;
+    // 플레이리스트 큐에서는 track.sourceAlbumId 가 트랙별 출처 앨범 — 그게 우선.
+    const albumId = track.sourceAlbumId ?? s.album.id;
     const tryStream = async () => {
       try {
         return await api.streamUrl(albumId, track.id);
@@ -175,6 +186,38 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         0,
         Math.min(startIndex, album.tracks.length - 1),
       ),
+    }));
+  }
+
+  // 플레이리스트 합성 album shell — id 'playlist:<id>' 로 마킹, tracks 는 크로스앨범.
+  // 각 트랙의 sourceAlbumId 로 stream fetch (재생 효과 § 2).
+  function setPlaylistQueue(
+    playlist: { id: string; name: string },
+    tracks: Track[],
+    startIndex: number,
+  ) {
+    if (tracks.length === 0) return;
+    const totalDur = tracks.reduce((acc, t) => acc + (t.durationSeconds || 0), 0);
+    const synthetic: Album = {
+      id: `playlist:${playlist.id}`,
+      title: playlist.name,
+      artist: "내 플레이리스트",
+      releaseDate: null,
+      edition: { label: null, number: 0, total: 0 },
+      audioSpec: { format: "WAV", bitDepth: 24, sampleRateHz: 96000, channels: 2 },
+      videoResolution: null,
+      trackCount: tracks.length,
+      activatedAt: undefined,
+      tracks,
+      // LibraryAlbum 의 옵셔널 totalDurationSeconds 가 있다면 채움 — 없으면 무시
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...({ totalDurationSeconds: totalDur } as any),
+    };
+    setS((p) => ({
+      ...p,
+      album: synthetic,
+      queue: tracks,
+      currentIndex: Math.max(0, Math.min(startIndex, tracks.length - 1)),
     }));
   }
 
@@ -309,6 +352,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       value={{
         ...s,
         setQueue,
+        setPlaylistQueue,
         togglePlay,
         next,
         prev,
