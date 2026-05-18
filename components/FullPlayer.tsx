@@ -74,12 +74,24 @@ export default function FullPlayer() {
           >
             NOW PLAYING
           </span>
+          {/* 컨텍스트 보기 — 일반 앨범이면 /play/album/<id>, 플레이리스트면
+              /play/playlists/<id> 로. id 가 'playlist:' prefix 면 playlist 페이지. */}
           <Link
-            href={`/play/album/${p.album.id}`}
+            href={
+              p.album.id.startsWith("playlist:")
+                ? `/play/playlists/${encodeURIComponent(
+                    p.album.id.slice("playlist:".length),
+                  )}`
+                : `/play/album/${p.album.id}`
+            }
             onClick={() => p.closeFull()}
             className="flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-black/5"
             style={{ color: "var(--woori-ink)" }}
-            aria-label="앨범 보기"
+            aria-label={
+              p.album.id.startsWith("playlist:")
+                ? "플레이리스트 보기"
+                : "앨범 보기"
+            }
           >
             <AlbumIcon />
           </Link>
