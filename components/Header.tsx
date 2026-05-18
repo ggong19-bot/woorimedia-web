@@ -42,7 +42,6 @@ export default function Header() {
             height={28}
             priority
             className="wm-logo-adaptive"
-            style={{ height: 28, width: "auto" }}
           />
         </Link>
 

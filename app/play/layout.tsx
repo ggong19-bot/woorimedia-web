@@ -43,7 +43,6 @@ function PlayInner({ children }: { children: React.ReactNode }) {
               height={26}
               priority
               className="wm-logo-adaptive"
-              style={{ height: 26, width: "auto" }}
             />
             <span
               className="ml-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold tracking-widest"

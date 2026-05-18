@@ -7,15 +7,33 @@ export const metadata: Metadata = {
   title: "우리미디어 — Studio audio. Cinema vision.",
   description:
     "원음 그대로, 시네마 그대로. USB 1개로 인증, 어디서든 재생, 평생 소장. 음반사·기획사 한정판 발주 통합 솔루션.",
-  metadataBase: new URL("https://woorimedia.com"),
+  metadataBase: new URL("https://woori-media.com"),
+  alternates: { canonical: "/" },
   icons: {
     icon: "/logo/woorimedia-mark-only.svg",
     apple: "/logo/woorimedia-mark-only.svg",
   },
   openGraph: {
-    title: "우리미디어",
+    title: "우리미디어 — Studio audio. Cinema vision.",
     description: "Studio audio. Cinema vision. · 원음 그대로, 시네마 그대로",
+    url: "https://woori-media.com",
+    siteName: "WooriMedia",
+    locale: "ko_KR",
     type: "website",
+    images: [
+      {
+        url: "/logo/woorimedia-logo-1024-dark.png",
+        width: 1024,
+        height: 1024,
+        alt: "WooriMedia",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "우리미디어 — Studio audio. Cinema vision.",
+    description: "원음 그대로, 시네마 그대로. USB 1개로 인증, 어디서든 재생.",
+    images: ["/logo/woorimedia-logo-1024-dark.png"],
   },
 };
 

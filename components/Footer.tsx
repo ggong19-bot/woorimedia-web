@@ -25,7 +25,6 @@ export default function Footer() {
               width={160}
               height={32}
               className="wm-logo-adaptive"
-              style={{ height: 32, width: "auto" }}
             />
             <p
               className="mt-5 max-w-xs text-sm leading-relaxed"
