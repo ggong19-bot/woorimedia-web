@@ -17,7 +17,9 @@ const SWIPE_THRESHOLD = 60;
 export default function FullPlayer() {
   const p = usePlayer();
   const cur = p.current();
-  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  // Pointer Events 로 마우스·터치·펜 통합 처리. 'touch' / 'mouse' / 'pen' 모두 동일
+  // 코드로 작동 — macOS Chrome 마우스 드래그, iPhone Safari 터치, Windows pen 입력 등.
+  const pointerStart = useRef<{ x: number; y: number; id: number } | null>(null);
   // 1 = 다음(좌→우 슬라이드 인), -1 = 이전. 자동 진행도 1 로 기본.
   const [swipeDir, setSwipeDir] = useState<1 | -1>(1);
 
@@ -32,20 +34,25 @@ export default function FullPlayer() {
     p.seek(ratio * (p.duration || total));
   }
 
-  // 스와이프 — 좌측 (dx < -threshold) → next, 우측 (> threshold) → prev.
-  // touchstart/touchend 만 사용 (touchmove 없이) — 단순·가벼움. seek 슬라이더/버튼은
-  // stopPropagation 으로 자기 이벤트 먼저 claim 하므로 충돌 없음.
-  function onTouchStart(e: React.TouchEvent) {
-    const t = e.changedTouches[0];
-    touchStart.current = { x: t.clientX, y: t.clientY };
+  // 스와이프 — 좌측 (dx <= -threshold) → next, 우측 (>= threshold) → prev.
+  // Pointer Events 라 마우스(드래그) + 터치 둘 다 동일 처리. seek 슬라이더와 버튼은
+  // 자식이라 이벤트가 wrapper 로도 버블 — 단순 클릭은 dx 가 작아 threshold 통과 못해
+  // 스와이프 트리거 안 됨 (자연스러운 충돌 회피).
+  function onPointerDown(e: React.PointerEvent) {
+    // 마우스 좌클릭만 (가운데/오른쪽 버튼 무시), 터치/펜은 그대로
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    pointerStart.current = {
+      x: e.clientX,
+      y: e.clientY,
+      id: e.pointerId,
+    };
   }
-  function onTouchEnd(e: React.TouchEvent) {
-    const start = touchStart.current;
-    touchStart.current = null;
-    if (!start) return;
-    const t = e.changedTouches[0];
-    const dx = t.clientX - start.x;
-    const dy = t.clientY - start.y;
+  function onPointerUp(e: React.PointerEvent) {
+    const start = pointerStart.current;
+    pointerStart.current = null;
+    if (!start || start.id !== e.pointerId) return;
+    const dx = e.clientX - start.x;
+    const dy = e.clientY - start.y;
     // 세로 변동이 가로의 절반 이상이면 수직 스크롤로 간주 — 무시
     if (Math.abs(dy) > Math.abs(dx) * 0.5) return;
     if (dx <= -SWIPE_THRESHOLD) {
@@ -56,6 +63,10 @@ export default function FullPlayer() {
       p.prev();
     }
   }
+  // pointercancel 도 처리 — 브라우저가 제스처 가로채는 경우 start 정리
+  function onPointerCancel() {
+    pointerStart.current = null;
+  }
 
   const upcoming = p.queue.length - p.currentIndex - 1;
 
@@ -65,8 +76,9 @@ export default function FullPlayer() {
       style={{ background: "var(--woori-paper)" }}
       role="dialog"
       aria-label="전체 화면 플레이어"
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerCancel}
     >
       <div className="mx-auto flex min-h-full max-w-xl flex-col px-6 pb-16">
         {/* ─── 상단 바 ─── */}
