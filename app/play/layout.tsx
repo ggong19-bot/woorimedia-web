@@ -3,17 +3,19 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { AuthProvider, useAuth } from "@/lib/auth_context";
-import { PlayerProvider } from "@/lib/player_context";
+import { PlayerProvider, usePlayer } from "@/lib/player_context";
 import MiniPlayer from "@/components/MiniPlayer";
 import FullPlayer from "@/components/FullPlayer";
 import TvBackHandler from "@/components/TvBackHandler";
 
 function PlayInner({ children }: { children: React.ReactNode }) {
   const { user, ready, signOut } = useAuth();
+  const player = usePlayer();
   const path = usePathname();
   const router = useRouter();
+  const prevUser = useRef(user);
 
   useEffect(() => {
     if (!ready) return;
@@ -24,6 +26,15 @@ function PlayInner({ children }: { children: React.ReactNode }) {
       router.replace("/play");
     }
   }, [ready, user, path, router]);
+
+  // 로그아웃(또는 토큰 만료) 시 재생 중단 — auth 와 player 가 분리돼 있어
+  // 명시적으로 stop 안 하면 로그아웃 후에도 음악이 계속 재생됨.
+  useEffect(() => {
+    if (prevUser.current && !user) {
+      player.stop();
+    }
+    prevUser.current = user;
+  }, [user, player]);
 
   if (!ready) return null;
 
