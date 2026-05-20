@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { fmt, usePlayer } from "@/lib/player_context";
+import AlbumCover from "@/components/AlbumCover";
 
 // 전체 화면 플레이어 — 미니플레이어 탭 시 확장. Ink/Paper 톤, 그라데이션/그림자 없음.
 // 맥(Flutter) full_player.dart 구조 미러링: 상단바 / 커버 마크 / 트랙정보 /
@@ -22,6 +23,10 @@ export default function FullPlayer() {
   const pointerStart = useRef<{ x: number; y: number; id: number } | null>(null);
   // 1 = 다음(좌→우 슬라이드 인), -1 = 이전. 자동 진행도 1 로 기본.
   const [swipeDir, setSwipeDir] = useState<1 | -1>(1);
+  // 가사 — lyricsUrl(공개 텍스트) on-demand fetch.
+  const [lyricsOpen, setLyricsOpen] = useState(false);
+  const [lyricsState, setLyricsState] = useState<{ url: string; text: string } | null>(null);
+  const [lyricsLoading, setLyricsLoading] = useState(false);
 
   if (!p.fullOpen || !cur || !p.album) return null;
 
@@ -66,6 +71,26 @@ export default function FullPlayer() {
   // pointercancel 도 처리 — 브라우저가 제스처 가로채는 경우 start 정리
   function onPointerCancel() {
     pointerStart.current = null;
+  }
+
+  async function toggleLyrics() {
+    if (lyricsOpen) {
+      setLyricsOpen(false);
+      return;
+    }
+    setLyricsOpen(true);
+    const lyricsUrl = cur && cur.lyricsUrl;
+    if (lyricsUrl && lyricsState?.url !== lyricsUrl) {
+      setLyricsLoading(true);
+      try {
+        const res = await fetch(lyricsUrl);
+        setLyricsState({ url: lyricsUrl, text: res.ok ? await res.text() : "" });
+      } catch {
+        setLyricsState({ url: lyricsUrl, text: "" });
+      } finally {
+        setLyricsLoading(false);
+      }
+    }
   }
 
   const upcoming = p.queue.length - p.currentIndex - 1;
@@ -127,28 +152,12 @@ export default function FullPlayer() {
           className={swipeDir === 1 ? "wm-swipe-in-right" : "wm-swipe-in-left"}
         >
           <div className="flex justify-center px-2 pb-6 pt-4">
-            <div
-              className="flex aspect-square w-full max-w-[280px] items-center justify-center"
-              style={{
-                background: "var(--woori-paper)",
-                border: "1px solid var(--woori-ink-hairline)",
-              }}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                width="96"
-                height="96"
-                fill="none"
-                stroke="var(--woori-ink)"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-label="WooriMedia"
-              >
-                <circle cx="12" cy="12" r="9" />
-                <path d="M9 8 L11 16 L13 11 L15 16 L17 8" />
-              </svg>
-            </div>
+            <AlbumCover
+              coverUrl={p.album.coverUrl}
+              alt={p.album.title}
+              className="w-full max-w-[280px]"
+              markSize={96}
+            />
           </div>
 
           {/* ─── 트랙 정보 ─── */}
@@ -165,7 +174,34 @@ export default function FullPlayer() {
             >
               {cur.artist} · {p.album.title}
             </p>
+            {cur.hasLyrics && cur.lyricsUrl && (
+              <button
+                onClick={toggleLyrics}
+                className="mt-3 inline-flex items-center gap-1 text-xs font-bold uppercase transition hover:opacity-100"
+                style={{ color: "var(--woori-ink-subtle)", letterSpacing: "0.18em", opacity: 0.7 }}
+              >
+                {lyricsOpen ? "가사 닫기 ▲" : "가사 ▾"}
+              </button>
+            )}
           </div>
+
+          {/* ─── 가사 패널 ─── */}
+          {lyricsOpen && (
+            <div
+              className="mx-2 mt-3 max-h-72 overflow-y-auto whitespace-pre-wrap px-4 py-4 text-center text-sm leading-relaxed"
+              style={{
+                background: "var(--woori-white)",
+                border: "1px solid var(--woori-ink-hairline)",
+                color: "var(--woori-ink)",
+              }}
+            >
+              {lyricsLoading
+                ? "불러오는 중…"
+                : lyricsState?.text && lyricsState.text.trim()
+                  ? lyricsState.text
+                  : "가사를 불러오지 못했습니다."}
+            </div>
+          )}
         </div>
 
         {/* ─── 진행 바 + 시간 ─── */}

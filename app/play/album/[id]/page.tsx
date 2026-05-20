@@ -7,6 +7,7 @@ import { fmt, usePlayer } from "@/lib/player_context";
 import type { AlbumDetail, Track } from "@/lib/types";
 import { PlaylistStore, type Playlist } from "@/lib/playlist_store";
 import Mark from "@/components/Mark";
+import AlbumCover from "@/components/AlbumCover";
 
 export default function PlayAlbumPage({
   params,
@@ -83,18 +84,13 @@ export default function PlayAlbumPage({
         style={{ background: "var(--woori-ink)", color: "var(--woori-paper)" }}
       >
         <div className="flex flex-col gap-8 md:flex-row md:items-end">
-          {/* 커버 자리 — 브랜드 마크 (그라데이션 placeholder, paper 마크 워터마크) */}
-          <div
-            className="flex aspect-square w-48 shrink-0 items-center justify-center md:w-56"
-            style={{
-              background: "linear-gradient(150deg, #2a2a2a, #0a0a0a)",
-              color: "var(--woori-paper)",
-            }}
-          >
-            <span style={{ width: 96, height: 96, opacity: 0.85 }}>
-              <Mark />
-            </span>
-          </div>
+          {/* 커버 — coverUrl 있으면 이미지, 없으면 마크 placeholder */}
+          <AlbumCover
+            coverUrl={album.coverUrl}
+            alt={album.title}
+            className="w-48 shrink-0 md:w-56"
+            markSize={96}
+          />
           <div className="flex-1">
             {album.edition?.label && (
               <span

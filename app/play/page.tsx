@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { api, ApiError } from "@/lib/api";
 import type { LibraryAlbum } from "@/lib/types";
 import Mark from "@/components/Mark";
+import AlbumCover from "@/components/AlbumCover";
 
 export default function PlayLibraryPage() {
   const [albums, setAlbums] = useState<LibraryAlbum[] | null>(null);
@@ -109,13 +110,8 @@ export default function PlayLibraryPage() {
                 background: "var(--woori-white)",
               }}
             >
-              <div
-                className="relative aspect-square"
-                style={{
-                  background: "linear-gradient(150deg, #2a2a2a, #0a0a0a)",
-                  color: "var(--woori-paper)",
-                }}
-              >
+              <div className="relative aspect-square">
+                <AlbumCover coverUrl={a.coverUrl} alt={a.title} markSize={80} />
                 {a.edition?.number && a.edition?.total && (
                   <span
                     className="absolute right-3 top-3 inline-flex items-center px-2 py-1 text-[10px] font-medium uppercase"
@@ -128,18 +124,6 @@ export default function PlayLibraryPage() {
                     #{a.edition.number}/{a.edition.total}
                   </span>
                 )}
-                <div className="flex h-full items-center justify-center">
-                  <span
-                    style={{
-                      width: 80,
-                      height: 80,
-                      color: "var(--woori-paper)",
-                      opacity: 0.85,
-                    }}
-                  >
-                    <Mark />
-                  </span>
-                </div>
                 <div
                   className="absolute bottom-3 right-3 px-2 py-0.5 text-[10px] font-bold"
                   style={{
