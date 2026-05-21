@@ -1,6 +1,7 @@
 "use client";
 
 import { fmt, usePlayer } from "@/lib/player_context";
+import AlbumCover from "@/components/AlbumCover";
 
 // 미니플레이어 — Ink/Paper 톤. 모든 컨트롤 inline SVG (stroke 기반).
 // 활성화 표시는 배경 박스 없이 색 진하기 + 아래 작은 점으로만.
@@ -24,7 +25,10 @@ export default function MiniPlayer() {
     <div
       className="fixed inset-x-0 bottom-0 z-30 backdrop-blur-md"
       style={{
-        background: "rgba(246, 244, 239, 0.96)",
+        // 다크모드에서 --woori-ink 텍스트가 밝게 반전되므로, 바 배경도 반전되는
+        // 토큰(--woori-header-bg: 라이트 cream / 다크 #1F1F1F)을 써서 대비 유지.
+        // (하드코딩 cream 이면 다크모드에서 밝은 바+밝은 텍스트로 안 보였음)
+        background: "var(--woori-header-bg)",
         borderTop: "1px solid var(--woori-ink-hairline)",
         boxShadow: "0 -4px 16px rgba(10, 10, 10, 0.04)",
       }}
@@ -46,17 +50,19 @@ export default function MiniPlayer() {
       </div>
 
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-6 py-3">
-        {/* 앨범 커버 / 마크 — 클릭 시 전체 화면 플레이어 */}
+        {/* 앨범 커버 — coverUrl 썸네일(없거나 404 면 AlbumCover 가 마크 fallback). 클릭 시 전체 화면 플레이어 */}
         <button
           onClick={() => p.openFull()}
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg transition hover:brightness-95"
-          style={{ background: "var(--woori-ink)" }}
+          className="h-12 w-12 shrink-0 overflow-hidden rounded-lg transition hover:brightness-95"
           aria-label="전체 화면 플레이어 열기"
         >
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--woori-paper)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M9 8 L11 16 L13 11 L15 16 L17 8" />
-          </svg>
+          <AlbumCover
+            coverUrl={p.album.coverUrl}
+            alt={p.album.title}
+            rounded
+            markSize={20}
+            className="h-full w-full"
+          />
         </button>
 
         {/* 곡 정보 — 클릭 시 전체 화면 플레이어 */}
