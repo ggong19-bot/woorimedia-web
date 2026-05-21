@@ -3,7 +3,6 @@
 
 import type {
   AuthResponse,
-  ActivateResponse,
   LibraryAlbum,
   AlbumDetail,
   DecryptionKeyResponse,
@@ -125,12 +124,8 @@ export const api = {
       auth: false,
     }),
 
-  // 시리얼 활성화 (인증 필요)
-  activate: (serialNumber: string, device?: { platform?: string; appVersion?: string; deviceId?: string }) =>
-    request<ActivateResponse>("/v1/serials/activate", {
-      method: "POST",
-      body: { serialNumber, device },
-    }),
+  // 시리얼 활성화는 웹에서 미지원 — Windows/Android/Mac 앱에서만 등록.
+  // (웹은 등록된 라이브러리 재생 전용. /v1/serials/activate 호출 안 함.)
 
   // 내 라이브러리 (인증 필요)
   library: () =>

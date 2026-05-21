@@ -10,13 +10,10 @@ import AlbumCover from "@/components/AlbumCover";
 export default function PlayLibraryPage() {
   const [albums, setAlbums] = useState<LibraryAlbum[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [showActivate, setShowActivate] = useState(false);
-  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    setAlbums(null);
-    setError(null);
+    // mount 시 1회 로드 — albums/error 초기값이 이미 null 이라 별도 리셋 불필요.
     api
       .library()
       .then((res) => {
@@ -34,7 +31,7 @@ export default function PlayLibraryPage() {
     return () => {
       cancelled = true;
     };
-  }, [reloadKey]);
+  }, []);
 
   return (
     <div>
@@ -75,16 +72,6 @@ export default function PlayLibraryPage() {
           >
             ▶ 내 플레이리스트
           </Link>
-          <button
-            onClick={() => setShowActivate(true)}
-            className="inline-flex h-10 items-center rounded-full px-5 text-sm font-bold transition hover:opacity-90"
-            style={{
-              background: "var(--woori-ink)",
-              color: "var(--woori-paper)",
-            }}
-          >
-            + 시리얼 등록
-          </button>
         </div>
       </div>
 
@@ -97,7 +84,7 @@ export default function PlayLibraryPage() {
       {albums === null ? (
         <LibrarySkeleton />
       ) : albums.length === 0 ? (
-        <EmptyLibrary onActivate={() => setShowActivate(true)} />
+        <EmptyLibrary />
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {albums.map((a) => (
@@ -155,16 +142,6 @@ export default function PlayLibraryPage() {
           ))}
         </div>
       )}
-
-      {showActivate && (
-        <ActivateModal
-          onClose={() => setShowActivate(false)}
-          onSuccess={() => {
-            setShowActivate(false);
-            setReloadKey((k) => k + 1);
-          }}
-        />
-      )}
     </div>
   );
 }
@@ -201,7 +178,7 @@ function LibrarySkeleton() {
   );
 }
 
-function EmptyLibrary({ onActivate }: { onActivate: () => void }) {
+function EmptyLibrary() {
   return (
     <div
       className="border border-dashed py-16 text-center"
@@ -228,127 +205,20 @@ function EmptyLibrary({ onActivate }: { onActivate: () => void }) {
         className="mx-auto mt-2 max-w-md text-sm"
         style={{ color: "var(--woori-ink-subtle)" }}
       >
-        제품에 동봉된 시리얼 코드를 입력하시면 무손실 음원과 4K 영상을
-        스트리밍하실 수 있습니다.
+        USB 시리얼 등록은 <strong>Windows · Android · Mac 우리미디어 앱</strong>에서
+        가능합니다. 앱에서 한 번 등록하시면, 같은 계정으로 로그인한 이 웹 플레이어에서도
+        무손실 음원과 4K 영상을 바로 재생하실 수 있습니다.
       </p>
-      <button
-        onClick={onActivate}
+      <Link
+        href="/product"
         className="mt-6 inline-flex h-11 items-center rounded-full px-6 text-sm font-bold transition hover:opacity-90"
         style={{
           background: "var(--woori-ink)",
           color: "var(--woori-paper)",
         }}
       >
-        + 시리얼 등록하기
-      </button>
-    </div>
-  );
-}
-
-function ActivateModal({
-  onClose,
-  onSuccess,
-}: {
-  onClose: () => void;
-  onSuccess: () => void;
-}) {
-  const [serial, setSerial] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function submit() {
-    if (!serial.trim() || busy) return;
-    setBusy(true);
-    setError(null);
-    try {
-      await api.activate(serial.trim().toUpperCase(), {
-        platform: "web",
-        appVersion: "0.1.0",
-      });
-      onSuccess();
-    } catch (e: unknown) {
-      const msg =
-        e instanceof ApiError
-          ? e.code === "SERIAL_NOT_FOUND"
-            ? "유효하지 않은 시리얼입니다."
-            : e.code === "SERIAL_ALREADY_ACTIVATED"
-              ? "이미 다른 계정에 등록된 USB입니다."
-              : e.message
-          : "등록 실패 — 네트워크를 확인해주세요.";
-      setError(msg);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <div
-      className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 px-6"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-md p-6 shadow-2xl"
-        style={{ background: "var(--woori-paper)" }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2
-          className="text-lg font-bold"
-          style={{ color: "var(--woori-ink)" }}
-        >
-          USB 시리얼 등록
-        </h2>
-        <p
-          className="mt-1 text-xs"
-          style={{ color: "var(--woori-ink-subtle)" }}
-        >
-          제품에 동봉된 16자리 코드를 입력해주세요. (예: WMD-DEMO-0001)
-        </p>
-        <input
-          type="text"
-          value={serial}
-          onChange={(e) => setSerial(e.target.value.toUpperCase())}
-          placeholder="WMD-XXXX-XXXX"
-          className="mt-4 h-12 w-full border-b bg-transparent px-2 font-mono text-sm uppercase tracking-widest outline-none"
-          style={{
-            borderColor: "var(--woori-ink-hairline)",
-            color: "var(--woori-ink)",
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") submit();
-          }}
-          disabled={busy}
-          autoFocus
-        />
-        {error && (
-          <p className="mt-3 text-xs font-bold" style={{ color: "#D9534F" }}>
-            {error}
-          </p>
-        )}
-        <div className="mt-5 flex gap-3">
-          <button
-            onClick={onClose}
-            disabled={busy}
-            className="flex-1 rounded-full border px-4 py-2.5 text-sm font-bold transition disabled:opacity-50"
-            style={{
-              borderColor: "var(--woori-ink-hairline)",
-              color: "var(--woori-ink-subtle)",
-            }}
-          >
-            취소
-          </button>
-          <button
-            onClick={submit}
-            disabled={busy || !serial.trim()}
-            className="flex-1 rounded-full px-4 py-2.5 text-sm font-bold transition disabled:opacity-60"
-            style={{
-              background: "var(--woori-ink)",
-              color: "var(--woori-paper)",
-            }}
-          >
-            {busy ? "등록 중…" : "등록"}
-          </button>
-        </div>
-      </div>
+        앱 다운로드 안내
+      </Link>
     </div>
   );
 }
