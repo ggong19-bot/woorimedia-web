@@ -23,7 +23,7 @@ const platforms = [
   { name: "iOS", desc: "App Store · iPhone · iPad", live: true, glyph: "apple" },
   { name: "Android", desc: "Play Store · 모든 Android", live: true, glyph: "android" },
   { name: "macOS", desc: "Mac App Store · Apple Silicon", live: true, glyph: "desktop" },
-  { name: "Windows", desc: "MS Store · Windows 10+", live: true, glyph: "windows" },
+  { name: "Windows", desc: "MS Store · Windows 10+", live: true, glyph: "windows", url: "https://apps.microsoft.com/detail/9MXQD522RXZM" },
   { name: "Web", desc: "play.woori-media.com", live: true, glyph: "web" },
   { name: "LG webOS", desc: "LG Smart TV", live: false, glyph: "tv-lg" },
   { name: "Samsung TV", desc: "Tizen Smart Hub", live: false, glyph: "tv-tizen" },
@@ -500,14 +500,35 @@ export default function HomePage() {
           </div>
 
           <div className="platform-grid">
-            {platforms.map((p) => (
-              <div className="p" key={p.name}>
-                <span className={p.live ? "status live" : "status"}>{p.live ? "LIVE" : "SOON"}</span>
-                <PlatformGlyph kind={p.glyph} />
-                <div className="name">{p.name}</div>
-                <div className="desc">{p.desc}</div>
-              </div>
-            ))}
+            {platforms.map((p) => {
+              // 정식 게시된 플랫폼에는 url을 달아두고, 있으면 카드 전체를 외부 링크로 감싼다.
+              // 현재는 Windows(MS Store)만 공개 링크 — 나머지는 출시 시점에 url 추가.
+              const href = (p as { url?: string }).url;
+              const body = (
+                <>
+                  <span className={p.live ? "status live" : "status"}>{p.live ? "LIVE" : "SOON"}</span>
+                  <PlatformGlyph kind={p.glyph} />
+                  <div className="name">{p.name}</div>
+                  <div className="desc">{p.desc}</div>
+                </>
+              );
+              return href ? (
+                <a
+                  className="p"
+                  key={p.name}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${p.name} 앱 다운로드 — 새 창에서 열기`}
+                >
+                  {body}
+                </a>
+              ) : (
+                <div className="p" key={p.name}>
+                  {body}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
