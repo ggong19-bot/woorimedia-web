@@ -232,7 +232,22 @@ export default function HomePage() {
       </nav>
 
       {/* ═══ HERO ═══ */}
-      <section className="hero">
+      <section className="hero hero--video">
+        {/* 배경 영상 — 자동재생·무음·루프, 포스터 폴백. 시네마틱 클립 들어오면
+            public/video/hero-bg.mp4 교체. aria-hidden(장식용). */}
+        <video
+          className="hero-bg"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster="/video/hero-poster.jpg"
+          aria-hidden="true"
+        >
+          <source src="/video/hero-bg.mp4" type="video/mp4" />
+        </video>
+        <div className="hero-scrim" aria-hidden="true" />
         <Mark className="drift" />
         <div className="wrap">
           <div className="inner">
@@ -241,12 +256,13 @@ export default function HomePage() {
                 WooriMedia · Streaming · Studio Audio · Cinema Vision
               </div>
               <h1 className="headline">
-                USB <em>한 번</em>,<br />
-                평생 재생.
+                <em>프리미엄</em>
+                <br />
+                USB <em>앨범</em>
               </h1>
               <p className="lede" style={{ marginTop: 48 }}>
-                24bit / 96kHz 무손실 음원과 4K 영상을 USB 1개에. <br />
-                한 번 활성화하면 iOS · Android · macOS · Windows · Web · TV — 어디서든.
+                24bit / 96kHz 무손실 음원과 4K 영상을 USB 1개에 <br />
+                한 번 활성화하면 iOS · Android · macOS · Windows · Web · TV — 어디서든
               </p>
               <div className="ctas" style={{ marginTop: 36 }}>
                 <a href="https://play.woori-media.com" className="primary">
@@ -265,7 +281,7 @@ export default function HomePage() {
                 </div>
                 <div className="stat">
                   <div className="n">
-                    96<span style={{ fontSize: "0.5em", color: "var(--mute)" }}>kHz</span>
+                    96<span style={{ fontSize: "0.42em", color: "rgba(255,255,255,0.6)", marginLeft: "0.04em" }}>kHz</span>
                   </div>
                   <div className="l">Studio audio</div>
                 </div>
@@ -407,19 +423,19 @@ export default function HomePage() {
               <h4>구매 + 연결</h4>
               <p>USB를 컴퓨터 또는 휴대폰에 꽂고 우리미디어 앱을 실행합니다.</p>
               <div className="visual">
-                <svg viewBox="0 0 240 160" fill="none" width="60%">
-                  <rect x="40" y="62" width="120" height="36" rx="4" stroke="currentColor" strokeWidth="1.5" />
-                  <rect x="160" y="70" width="32" height="20" stroke="currentColor" strokeWidth="1.5" fill="none" />
-                  <line x1="166" y1="78" x2="186" y2="78" stroke="currentColor" strokeWidth="1.5" />
-                  <line x1="166" y1="82" x2="186" y2="82" stroke="currentColor" strokeWidth="1.5" />
-                  <circle cx="56" cy="80" r="4" stroke="currentColor" strokeWidth="1.2" />
+                <svg viewBox="0 0 240 160" fill="none" width="76%">
+                  <rect x="36" y="54" width="140" height="52" rx="6" stroke="currentColor" strokeWidth="1.5" />
+                  <rect x="176" y="68" width="28" height="24" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                  <line x1="180" y1="76" x2="198" y2="76" stroke="currentColor" strokeWidth="1.5" />
+                  <line x1="180" y1="84" x2="198" y2="84" stroke="currentColor" strokeWidth="1.5" />
+                  <circle cx="54" cy="80" r="4.5" stroke="currentColor" strokeWidth="1.2" />
                   <text
-                    x="78"
+                    x="72"
                     y="84"
                     fontFamily="'Space Grotesk', monospace"
                     fontSize="10"
                     fill="currentColor"
-                    letterSpacing="2"
+                    letterSpacing="1"
                   >
                     WM #0247/1000
                   </text>
@@ -432,9 +448,9 @@ export default function HomePage() {
               <h4>시리얼 등록</h4>
               <p>USB의 고유 시리얼을 계정에 등록하면 즉시 클라우드에 귀속됩니다.</p>
               <div className="visual">
-                <svg viewBox="0 0 240 160" fill="none" width="60%">
+                <svg viewBox="0 0 240 160" fill="none" width="76%">
                   <rect x="40" y="40" width="160" height="80" stroke="currentColor" strokeWidth="1.5" fill="none" />
-                  <line x1="40" y1="60" x2="200" y2="60" stroke="currentColor" strokeWidth="1" />
+                  <line x1="40" y1="62" x2="200" y2="62" stroke="currentColor" strokeWidth="1" />
                   <text
                     x="52"
                     y="55"
@@ -447,16 +463,16 @@ export default function HomePage() {
                   </text>
                   <text
                     x="52"
-                    y="84"
+                    y="86"
                     fontFamily="'Space Grotesk', monospace"
-                    fontSize="14"
+                    fontSize="13"
                     fill="currentColor"
-                    letterSpacing="4"
+                    letterSpacing="3"
                   >
                     WM-0247-A8F2
                   </text>
-                  <rect x="52" y="92" width="100" height="20" fill="currentColor" />
-                  <text x="60" y="106" fontFamily="'Space Grotesk'" fontSize="11" fill="var(--paper-soft)" fontWeight="500">
+                  <rect x="52" y="94" width="100" height="20" fill="currentColor" />
+                  <text x="60" y="108" fontFamily="'Space Grotesk'" fontSize="11" fill="var(--paper-soft)" fontWeight="500">
                     ACTIVATE
                   </text>
                 </svg>
@@ -468,13 +484,13 @@ export default function HomePage() {
               <h4>어디서나 재생</h4>
               <p>모든 디바이스에서 같은 라이브러리. USB 없이도 평생 액세스.</p>
               <div className="visual">
-                <svg viewBox="0 0 240 160" fill="none" width="70%">
-                  <rect x="20" y="30" width="44" height="80" rx="6" stroke="currentColor" strokeWidth="1.5" />
-                  <rect x="80" y="50" width="68" height="48" rx="3" stroke="currentColor" strokeWidth="1.5" />
-                  <rect x="164" y="42" width="56" height="64" rx="3" stroke="currentColor" strokeWidth="1.5" />
-                  <line x1="178" y1="100" x2="206" y2="100" stroke="currentColor" strokeWidth="1.5" />
-                  <line x1="192" y1="106" x2="192" y2="120" stroke="currentColor" strokeWidth="1.5" />
-                  <circle cx="42" cy="106" r="3" fill="currentColor" />
+                <svg viewBox="0 0 240 160" fill="none" width="76%">
+                  <rect x="24" y="42" width="42" height="76" rx="6" stroke="currentColor" strokeWidth="1.5" />
+                  <rect x="82" y="56" width="62" height="48" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                  <rect x="160" y="46" width="56" height="56" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                  <line x1="188" y1="102" x2="188" y2="116" stroke="currentColor" strokeWidth="1.5" />
+                  <line x1="174" y1="116" x2="202" y2="116" stroke="currentColor" strokeWidth="1.5" />
+                  <circle cx="45" cy="110" r="3" fill="currentColor" />
                 </svg>
               </div>
             </div>

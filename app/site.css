@@ -253,7 +253,7 @@ hr.rule {
   gap: 56px;
 }
 .hero .stats .stat {
-  text-align: right;
+  text-align: center;
 }
 .hero .stats .stat .n {
   font: 300 56px/1 "Space Grotesk";
@@ -294,6 +294,69 @@ hr.rule {
   color: var(--ink);
   opacity: 0.05;
   pointer-events: none;
+}
+
+/* ─── Hero background video (시네마틱 다크 처리) ─── */
+.hero--video .hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero--video .hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* 좌측(텍스트 영역) 진하게 → 우측 옅게 + 상·하단 페이드로 가독성 + 마퀴 경계 */
+  background:
+    linear-gradient(100deg, rgba(10, 10, 10, 0.86) 0%, rgba(10, 10, 10, 0.6) 44%, rgba(10, 10, 10, 0.38) 100%),
+    linear-gradient(to bottom, rgba(10, 10, 10, 0.35), rgba(10, 10, 10, 0) 28%, rgba(10, 10, 10, 0.55));
+}
+.hero--video .wrap {
+  position: relative;
+  z-index: 2;
+}
+.hero--video .drift {
+  color: var(--paper);
+  opacity: 0.06;
+  z-index: 1;
+}
+/* 다크 영상 위 → 텍스트·요소 라이트 전환 */
+.hero--video .headline {
+  color: var(--paper);
+}
+.hero--video .eyebrow {
+  color: rgba(246, 244, 239, 0.72);
+}
+.hero--video .lede {
+  color: var(--sub-d);
+}
+.hero--video .stats .stat .n {
+  color: var(--paper);
+}
+.hero--video .stats .stat .l {
+  color: var(--mute-d);
+}
+.hero--video .ctas a.primary {
+  background: var(--paper);
+  color: var(--ink);
+}
+.hero--video .ctas a.ghost {
+  border-color: rgba(246, 244, 239, 0.42);
+  color: var(--paper);
+}
+/* 모션 최소화 선호 시 영상 정지(포스터만 표시) */
+@media (prefers-reduced-motion: reduce) {
+  .hero--video .hero-bg {
+    display: none;
+  }
+  .hero--video .hero-scrim {
+    background: var(--ink);
+  }
 }
 
 /* marquee under hero */

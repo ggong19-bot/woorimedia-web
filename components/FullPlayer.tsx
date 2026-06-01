@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { fmt, usePlayer } from "@/lib/player_context";
 import AlbumCover from "@/components/AlbumCover";
 
@@ -151,13 +151,44 @@ export default function FullPlayer() {
           key={cur.id}
           className={swipeDir === 1 ? "wm-swipe-in-right" : "wm-swipe-in-left"}
         >
+          {/* 앨범아트 탭 → 가사 토글. 가사 중엔 아트 반투명 + 위에 가사 오버레이. */}
           <div className="flex justify-center px-2 pb-6 pt-4">
-            <AlbumCover
-              coverUrl={p.album.coverUrl}
-              alt={p.album.title}
-              className="w-full max-w-[280px]"
-              markSize={96}
-            />
+            <div
+              className="relative w-full max-w-[280px]"
+              onClick={cur.hasLyrics && cur.lyricsUrl ? toggleLyrics : undefined}
+              role={cur.hasLyrics && cur.lyricsUrl ? "button" : undefined}
+              aria-label={
+                cur.hasLyrics && cur.lyricsUrl
+                  ? lyricsOpen
+                    ? "앨범아트 보기"
+                    : "가사 보기"
+                  : undefined
+              }
+              style={{
+                cursor: cur.hasLyrics && cur.lyricsUrl ? "pointer" : "default",
+              }}
+            >
+              <div style={{ opacity: lyricsOpen ? 0.22 : 1, transition: "opacity 200ms" }}>
+                <AlbumCover
+                  coverUrl={p.album.coverUrl}
+                  alt={p.album.title}
+                  className="w-full"
+                  markSize={96}
+                />
+              </div>
+              {lyricsOpen && (
+                <div
+                  className="absolute inset-0 flex items-center justify-center overflow-y-auto px-5 py-5 text-center text-sm leading-relaxed"
+                  style={{ color: "var(--woori-ink)" }}
+                >
+                  <LyricsView
+                    text={lyricsState?.text}
+                    currentTime={p.currentTime}
+                    loading={lyricsLoading}
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* ─── 트랙 정보 ─── */}
@@ -175,33 +206,14 @@ export default function FullPlayer() {
               {cur.artist} · {p.album.title}
             </p>
             {cur.hasLyrics && cur.lyricsUrl && (
-              <button
-                onClick={toggleLyrics}
-                className="mt-3 inline-flex items-center gap-1 text-xs font-bold uppercase transition hover:opacity-100"
-                style={{ color: "var(--woori-ink-subtle)", letterSpacing: "0.18em", opacity: 0.7 }}
+              <p
+                className="mt-2 text-[10px] font-semibold uppercase"
+                style={{ color: "var(--woori-ink-subtle)", letterSpacing: "0.16em", opacity: 0.6 }}
               >
-                {lyricsOpen ? "가사 닫기 ▲" : "가사 ▾"}
-              </button>
+                {lyricsOpen ? "앨범아트 보려면 탭" : "가사 보려면 앨범아트 탭"}
+              </p>
             )}
           </div>
-
-          {/* ─── 가사 패널 ─── */}
-          {lyricsOpen && (
-            <div
-              className="mx-2 mt-3 max-h-72 overflow-y-auto whitespace-pre-wrap px-4 py-4 text-center text-sm leading-relaxed"
-              style={{
-                background: "var(--woori-white)",
-                border: "1px solid var(--woori-ink-hairline)",
-                color: "var(--woori-ink)",
-              }}
-            >
-              {lyricsLoading
-                ? "불러오는 중…"
-                : lyricsState?.text && lyricsState.text.trim()
-                  ? lyricsState.text
-                  : "가사를 불러오지 못했습니다."}
-            </div>
-          )}
         </div>
 
         {/* ─── 진행 바 + 시간 ─── */}
@@ -436,6 +448,85 @@ function ModeChip({
         {label}
       </span>
     </button>
+  );
+}
+
+// ─── 가사 (LRC 파싱 → 싱크면 2줄 follow, 평문이면 스크롤) ──────────
+
+function parseLrc(src: string): {
+  synced: boolean;
+  lines: { t: number; text: string }[];
+} {
+  const tag = /\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/g;
+  const out: { t: number; text: string }[] = [];
+  const plain: string[] = [];
+  for (const raw of src.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line) continue;
+    const matches = [...line.matchAll(tag)];
+    if (matches.length === 0) {
+      plain.push(line);
+      continue;
+    }
+    const body = line.slice(line.lastIndexOf("]") + 1).trim();
+    for (const m of matches) {
+      const mm = parseInt(m[1] || "0", 10);
+      const ss = parseInt(m[2] || "0", 10);
+      const frac = m[3] || "0";
+      const ms =
+        frac.length === 3
+          ? parseInt(frac, 10)
+          : parseInt(frac.padEnd(2, "0"), 10) * 10;
+      out.push({ t: mm * 60 + ss + ms / 1000, text: body });
+    }
+  }
+  if (out.length === 0 && plain.length > 0) {
+    return { synced: false, lines: plain.map((text) => ({ t: 0, text })) };
+  }
+  out.sort((a, b) => a.t - b.t);
+  return { synced: out.length > 0, lines: out };
+}
+
+function LyricsView({
+  text,
+  currentTime,
+  loading,
+}: {
+  text?: string;
+  currentTime: number;
+  loading: boolean;
+}) {
+  const parsed = useMemo(() => (text ? parseLrc(text) : null), [text]);
+  if (loading) return <div className="w-full font-medium">불러오는 중…</div>;
+  if (!parsed || parsed.lines.length === 0) {
+    return <div className="w-full font-medium">가사를 불러오지 못했습니다.</div>;
+  }
+  // 평문(타임스탬프 없음) — 전체 스크롤.
+  if (!parsed.synced) {
+    return (
+      <div className="w-full whitespace-pre-wrap font-medium">
+        {parsed.lines.map((l) => l.text).join("\n")}
+      </div>
+    );
+  }
+  // 싱크 — 현재 줄 + 다음 줄 2줄 follow.
+  let cur = -1;
+  for (let i = 0; i < parsed.lines.length; i++) {
+    if (parsed.lines[i].t <= currentTime) cur = i;
+    else break;
+  }
+  const curText = cur >= 0 ? parsed.lines[cur].text : "";
+  const nextText =
+    cur + 1 < parsed.lines.length ? parsed.lines[cur + 1].text : "";
+  return (
+    <div className="w-full">
+      <div className="text-base font-extrabold">{curText || "♪"}</div>
+      {nextText && (
+        <div className="mt-2 text-sm font-medium" style={{ opacity: 0.5 }}>
+          {nextText}
+        </div>
+      )}
+    </div>
   );
 }
 
