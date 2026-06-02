@@ -70,6 +70,15 @@ export default function Header() {
             가서 1 hop 절약. */}
         <a
           href="https://play.woori-media.com/play"
+          onClick={(e) => {
+            e.preventDefault();
+            // 웹플레이어를 폰 비율(9:16, 450×820) 팝업으로 — 데스크톱에서 폰처럼.
+            window.open(
+              "https://play.woori-media.com/play",
+              "woori_player",
+              "width=450,height=820,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes",
+            );
+          }}
           className="inline-flex h-10 items-center rounded-full px-5 text-sm font-bold transition"
           style={{
             background: "var(--woori-ink)",

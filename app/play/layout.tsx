@@ -46,7 +46,7 @@ function PlayInner({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-bg-soft pb-20">
       <header className="sticky top-0 z-20 border-b border-divider bg-white/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+        <div className="mx-auto flex h-16 max-w-[450px] items-center justify-between px-6">
           <Link href="/play" className="flex items-center gap-3" aria-label="우리미디어">
             <Image
               src="/logo/woorimedia-horizontal.svg"
@@ -114,7 +114,7 @@ function PlayInner({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-10">{children}</main>
+      <main className="mx-auto max-w-[450px] px-6 py-10">{children}</main>
 
       <MiniPlayer />
       <FullPlayer />
