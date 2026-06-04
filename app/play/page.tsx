@@ -97,9 +97,14 @@ export default function PlayLibraryPage() {
                 background: "var(--woori-white)",
               }}
             >
-              <div className="relative aspect-square">
-                <AlbumCover coverUrl={a.coverUrl} alt={a.title} markSize={80} />
-                {a.edition?.number && a.edition?.total && (
+              <div className="relative aspect-square" style={{ aspectRatio: "1 / 1" }}>
+                <AlbumCover
+                  className="absolute inset-0 h-full w-full"
+                  coverUrl={a.coverUrl}
+                  alt={a.title}
+                  markSize={80}
+                />
+                {Boolean(a.edition?.number && a.edition?.total) && (
                   <span
                     className="absolute right-3 top-3 inline-flex items-center px-2 py-1 text-[10px] font-medium uppercase"
                     style={{
@@ -112,7 +117,7 @@ export default function PlayLibraryPage() {
                   </span>
                 )}
                 <div
-                  className="absolute bottom-3 right-3 px-2 py-0.5 text-[10px] font-bold"
+                  className="absolute bottom-3 right-3 inline-flex items-center px-2 py-0.5 text-[10px] font-bold leading-none"
                   style={{
                     border: "1px solid rgba(246,244,239,0.2)",
                     color: "var(--woori-paper)",

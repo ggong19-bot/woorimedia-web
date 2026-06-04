@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import WebPlayerLink from "@/components/WebPlayerLink";
 
 // 홈(/) 과 플레이어(/play, /pair) 는 자체 footer 를 렌더 — 글로벌 footer 숨김.
 const PLAYER_PATHS = ["/play", "/pair"];
@@ -66,12 +67,9 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a
-                  href="https://play.woori-media.com"
-                  className={linkClass}
-                >
+                <WebPlayerLink className={linkClass}>
                   웹 플레이어
-                </a>
+                </WebPlayerLink>
               </li>
               <li>
                 <Link href="/partners" className={linkClass}>

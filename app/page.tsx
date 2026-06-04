@@ -1,5 +1,6 @@
 import "./site.css";
 import Mark from "@/components/Mark";
+import WebPlayerLink from "@/components/WebPlayerLink";
 
 // woori-media.com 랜딩 — 14섹션 모노크롬 리뉴얼.
 // design_handoff_woorimedia_site 디자인 핸드오프 기준. 전 섹션 서버 컴포넌트
@@ -265,9 +266,9 @@ export default function HomePage() {
                 한 번 활성화하면 iOS · Android · macOS · Windows · Web · TV — 어디서든
               </p>
               <div className="ctas" style={{ marginTop: 36 }}>
-                <a href="https://play.woori-media.com" className="primary">
+                <WebPlayerLink className="primary">
                   웹 플레이어
-                </a>
+                </WebPlayerLink>
                 <a href="#what" className="ghost">
                   우리미디어란 →
                 </a>
@@ -821,9 +822,9 @@ export default function HomePage() {
             앱을 다운로드하고, USB를 연결하고, 시리얼을 등록하세요. 그 다음은 단순합니다 — 재생.
           </p>
           <div className="ctas">
-            <a href="https://play.woori-media.com" className="primary">
+            <WebPlayerLink className="primary">
               웹 플레이어
-            </a>
+            </WebPlayerLink>
             <a href="#partners" className="ghost">
               파트너 문의
             </a>
@@ -860,7 +861,7 @@ export default function HomePage() {
                   <a href="#library">발매 라인업</a>
                 </li>
                 <li>
-                  <a href="https://play.woori-media.com">Web Player</a>
+                  <WebPlayerLink>Web Player</WebPlayerLink>
                 </li>
               </ul>
             </div>
