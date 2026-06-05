@@ -131,6 +131,23 @@ export const api = {
   library: () =>
     request<{ albums: LibraryAlbum[] }>("/v1/me/library"),
 
+  // 연결된 소셜 로그인 목록 (계정연동) — 인증 필요
+  identities: () =>
+    request<{
+      identities: {
+        provider: string;
+        maskedEmail: string | null;
+        linkedAt: string;
+        lastSeenAt: string;
+      }[];
+    }>("/v1/me/identities"),
+
+  // 소셜 연결 해제 — 인증 필요 (마지막 1개는 409 LAST_IDENTITY)
+  unlinkIdentity: (provider: string) =>
+    request<{ ok: boolean }>(`/v1/me/identities/${provider}`, {
+      method: "DELETE",
+    }),
+
   // 앨범 상세 (인증 필요)
   album: (albumId: string) =>
     request<AlbumDetail>(`/v1/albums/${albumId}`),

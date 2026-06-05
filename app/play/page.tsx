@@ -63,6 +63,16 @@ export default function PlayLibraryPage() {
         </div>
         <div className="flex items-center gap-2">
           <Link
+            href="/play/account"
+            className="inline-flex h-10 items-center rounded-full border px-4 text-sm font-bold transition hover:opacity-90"
+            style={{
+              borderColor: "var(--woori-ink-hairline)",
+              color: "var(--woori-ink)",
+            }}
+          >
+            계정
+          </Link>
+          <Link
             href="/play/playlists"
             className="inline-flex h-10 items-center rounded-full border px-4 text-sm font-bold transition hover:opacity-90"
             style={{
