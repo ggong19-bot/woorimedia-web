@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { api, getToken, setToken, ApiError, API_BASE_URL } from "./api";
 import type { WmUser } from "./types";
 
@@ -55,6 +55,9 @@ function toWmUser(u: {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<WmUser | null>(null);
   const [ready, setReady] = useState(false);
+  // 소셜 로그인 직후 계정연동 안내(검증 이메일로 기존계정 자동연결됨). 콜백 쿼리에서 받음.
+  const [linkNotice, setLinkNotice] = useState<string | null>(null);
+  const dismissNotice = useCallback(() => setLinkNotice(null), []);
 
   useEffect(() => {
     // 1) 카카오 redirect 콜백 처리 — URL에 ?token=...&uid=... 있으면 캐치
@@ -72,6 +75,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(incoming);
         localStorage.setItem(USER_KEY, JSON.stringify(incoming));
         setToken(token);
+        // 계정연동: 백엔드가 검증 이메일로 기존계정에 자동 연결했으면 안내.
+        const suggestedName = params.get("suggestedName");
+        if (suggestedName) setLinkNotice(suggestedName);
         // URL 정리 (token 노출 제거)
         const cleanUrl = window.location.pathname;
         window.history.replaceState({}, "", cleanUrl);
@@ -185,6 +191,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signOut,
       }}
     >
+      {linkNotice && (
+        <AccountLinkBanner name={linkNotice} onClose={dismissNotice} />
+      )}
       {children}
     </AuthContext.Provider>
   );
@@ -203,6 +212,62 @@ function _emailErrorMessage(e: ApiError): string {
     default:
       return `오류 (${e.code || e.status})`;
   }
+}
+
+/** 소셜 로그인 직후 "기존 계정에 연결됐어요" 토스트 (8초 후 자동 사라짐). */
+function AccountLinkBanner({
+  name,
+  onClose,
+}: {
+  name: string;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const t = setTimeout(onClose, 8000);
+    return () => clearTimeout(t);
+  }, [onClose]);
+  return (
+    <div
+      role="status"
+      style={{
+        position: "fixed",
+        bottom: 24,
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 100,
+        maxWidth: "min(92vw, 440px)",
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        padding: "12px 18px",
+        background: "var(--woori-ink)",
+        color: "var(--woori-paper)",
+        fontSize: 13,
+        fontWeight: 600,
+        boxShadow: "0 4px 24px rgba(0,0,0,0.28)",
+      }}
+    >
+      <span style={{ lineHeight: 1.45 }}>
+        {name} 님 계정에 연결됐어요. 같은 라이브러리를 그대로 사용할 수 있어요.
+      </span>
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="닫기"
+        style={{
+          flexShrink: 0,
+          background: "transparent",
+          border: "none",
+          color: "var(--woori-paper)",
+          fontSize: 16,
+          lineHeight: 1,
+          cursor: "pointer",
+        }}
+      >
+        ✕
+      </button>
+    </div>
+  );
 }
 
 export function useAuth() {
