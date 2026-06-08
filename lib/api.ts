@@ -148,6 +148,32 @@ export const api = {
       method: "DELETE",
     }),
 
+  // 이메일 인증 계정통합 ① — 상대 계정 이메일로 6자리 코드 발송 (인증 필요)
+  requestMergeCode: (email: string) =>
+    request<{
+      ok: boolean;
+      otherAccount: {
+        usbCount: number;
+        playlistCount: number;
+        providers: string[];
+        maskedEmail: string | null;
+      };
+      maskedEmail: string | null;
+    }>("/v1/me/merge/request-code", {
+      method: "POST",
+      body: { email },
+    }),
+
+  // 이메일 인증 계정통합 ② — 코드 검증 → 통합 실행 (인증 필요)
+  verifyMergeCode: (email: string, code: string) =>
+    request<{ ok: boolean; merged: Record<string, unknown> }>(
+      "/v1/me/merge/verify-code",
+      {
+        method: "POST",
+        body: { email, code },
+      },
+    ),
+
   // 앨범 상세 (인증 필요)
   album: (albumId: string) =>
     request<AlbumDetail>(`/v1/albums/${albumId}`),

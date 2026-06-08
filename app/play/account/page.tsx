@@ -144,13 +144,187 @@ export default function AccountPage() {
         </div>
       )}
 
+      <MergeSection onMerged={load} />
+
       <p
-        className="mt-8 text-xs leading-relaxed"
+        className="mt-6 text-xs leading-relaxed"
         style={{ color: "var(--woori-ink-subtle)" }}
       >
-        다른 소셜 계정 추가 연결은 <strong>우리미디어 앱</strong>에서 가능합니다.
-        (웹 추가 연결 기능은 곧 지원 예정)
+        소셜 <strong>추가 연결</strong>(카카오·구글 등 한 번에 묶기)은{" "}
+        <strong>우리미디어 앱</strong>에서 가능합니다.
       </p>
+    </div>
+  );
+}
+
+function MergeSection({ onMerged }: { onMerged: () => void }) {
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [codeSent, setCodeSent] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
+
+  function mergeErr(e: unknown): string {
+    if (e instanceof ApiError) {
+      switch (e.code) {
+        case "ACCOUNT_NOT_FOUND":
+          return "그 이메일로 가입된 계정이 없습니다.";
+        case "SAME_ACCOUNT":
+          return "지금 로그인한 계정과 같은 계정입니다.";
+        case "EMAIL_SEND_FAILED":
+          return "메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        case "INVALID_OR_EXPIRED_CODE":
+          return "코드가 틀리거나 만료됐습니다. 다시 받아주세요.";
+      }
+      return e.message;
+    }
+    return "처리 중 오류가 발생했습니다.";
+  }
+
+  async function sendCode() {
+    const em = email.trim();
+    if (!em.includes("@")) {
+      setError("이메일을 정확히 입력해주세요.");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const r = await api.requestMergeCode(em);
+      const usb = r.otherAccount?.usbCount ?? 0;
+      setInfo(
+        `USB ${usb}장이 연결된 계정입니다. ${r.maskedEmail || "메일"}(으)로 보낸 6자리 코드를 입력해주세요.`,
+      );
+      setCodeSent(true);
+    } catch (e: unknown) {
+      setError(mergeErr(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function verify() {
+    if (code.trim().length < 4) {
+      setError("코드를 입력해주세요.");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      await api.verifyMergeCode(email.trim(), code.trim());
+      setDone(true);
+      onMerged();
+    } catch (e: unknown) {
+      setError(mergeErr(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (done) {
+    return (
+      <div
+        className="mt-8 rounded-xl border p-4 text-sm"
+        style={{
+          borderColor: "var(--woori-ink-hairline)",
+          background: "var(--woori-white)",
+          color: "var(--woori-ink)",
+        }}
+      >
+        ✅ 계정을 통합했습니다. 상대 계정의 USB·기록을 이 계정으로 가져왔어요.
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="mt-8 rounded-xl border p-4"
+      style={{
+        borderColor: "var(--woori-ink-hairline)",
+        background: "var(--woori-white)",
+      }}
+    >
+      <h2 className="text-sm font-bold" style={{ color: "var(--woori-ink)" }}>
+        다른 계정과 통합
+      </h2>
+      <p className="mt-1 text-xs" style={{ color: "var(--woori-ink-subtle)" }}>
+        다른 계정의 이메일로 인증코드를 받아, 그 계정의 USB·기록을 이 계정으로
+        가져옵니다.
+      </p>
+
+      {!codeSent ? (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={busy}
+            placeholder="상대 계정 이메일"
+            className="flex-1 rounded-lg border px-3 py-2 text-sm outline-none"
+            style={{
+              borderColor: "var(--woori-ink-hairline)",
+              color: "var(--woori-ink)",
+            }}
+          />
+          <button
+            onClick={sendCode}
+            disabled={busy}
+            className="rounded-lg px-3 py-2 text-xs font-bold text-white transition hover:opacity-90 disabled:opacity-40"
+            style={{ background: "var(--woori-ink)" }}
+          >
+            {busy ? "…" : "코드 받기"}
+          </button>
+        </div>
+      ) : (
+        <div className="mt-3">
+          {info && (
+            <p
+              className="mb-2 text-xs"
+              style={{ color: "var(--woori-ink-subtle)" }}
+            >
+              {info}
+            </p>
+          )}
+          <div className="flex gap-2">
+            <input
+              inputMode="numeric"
+              value={code}
+              onChange={(e) =>
+                setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+              }
+              disabled={busy}
+              placeholder="인증코드 6자리"
+              className="flex-1 rounded-lg border px-3 py-2 text-sm tracking-widest outline-none"
+              style={{
+                borderColor: "var(--woori-ink-hairline)",
+                color: "var(--woori-ink)",
+              }}
+            />
+            <button
+              onClick={verify}
+              disabled={busy}
+              className="rounded-lg px-3 py-2 text-xs font-bold text-white transition hover:opacity-90 disabled:opacity-40"
+              style={{ background: "var(--woori-ink)" }}
+            >
+              {busy ? "…" : "통합하기"}
+            </button>
+          </div>
+          <p
+            className="mt-2 text-[11px]"
+            style={{ color: "var(--woori-ink-subtle)" }}
+          >
+            이 계정으로 USB·기록이 옮겨지고, 상대 계정은 삭제됩니다.
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <p className="mt-2 text-xs" style={{ color: "#D9534F" }}>
+          {error}
+        </p>
+      )}
     </div>
   );
 }
