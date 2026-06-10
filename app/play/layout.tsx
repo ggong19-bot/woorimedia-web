@@ -23,7 +23,11 @@ function PlayInner({ children }: { children: React.ReactNode }) {
       router.replace("/play/login");
     }
     if (user && path.startsWith("/play/login")) {
-      router.replace("/play");
+      // ?redirect= 가 있으면 로그인 후 그쪽으로 (예: /pair?code=... TV 페어링 복귀).
+      // 같은 사이트 상대경로만 허용 — "//host" 류 open-redirect 차단.
+      const r = new URLSearchParams(window.location.search).get("redirect");
+      const safe = r && r.startsWith("/") && !r.startsWith("//") ? r : "/play";
+      router.replace(safe);
     }
   }, [ready, user, path, router]);
 
