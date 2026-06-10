@@ -1,7 +1,7 @@
 // 호스트 기반 라우트 분기 — 같은 코드베이스, 두 도메인.
 //
 //   woori-media.com / www.woori-media.com  →  마케팅만 (홈/제품/회사/파트너/지원)
-//   play.woori-media.com                    →  플레이어만 (/play, /pair)
+//   play.woori-media.com                    →  플레이어만 (/play, /pair, /tv)
 //
 // 잘못된 호스트에서 진입하면 올바른 도메인으로 cross-domain redirect.
 // localhost / Vercel preview (woorimedia-*.vercel.app) 는 분기 적용 안 함.
@@ -12,7 +12,7 @@ const MARKETING_HOSTS = ["woori-media.com", "www.woori-media.com"];
 const PLAYER_HOST = "play.woori-media.com";
 
 // 플레이어 도메인이 노출해도 되는 경로
-const PLAYER_PATHS = ["/play", "/pair"];
+const PLAYER_PATHS = ["/play", "/pair", "/tv"];
 
 function isPlayerPath(path: string): boolean {
   return PLAYER_PATHS.some((p) => path === p || path.startsWith(p + "/"));
