@@ -5,8 +5,8 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import WebPlayerLink from "@/components/WebPlayerLink";
 
-// 홈(/) 과 플레이어(/play, /pair) 는 자체 footer 를 렌더 — 글로벌 footer 숨김.
-const PLAYER_PATHS = ["/play", "/pair"];
+// 홈(/) 과 플레이어(/play, /pair) · TV(/tv) 는 자체 footer 를 렌더 — 글로벌 footer 숨김.
+const PLAYER_PATHS = ["/play", "/pair", "/tv"];
 
 export default function Footer() {
   const path = usePathname();

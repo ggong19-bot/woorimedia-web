@@ -12,10 +12,10 @@ const links = [
   { href: "/support", label: "지원" },
 ];
 
-// 플레이어 영역 (/play, /pair) 은 자체 헤더 사용 — Header/Footer 숨김.
+// 플레이어 영역 (/play, /pair) · TV (/tv) 는 자체 헤더 사용 — Header/Footer 숨김.
 // 홈(/) 은 리뉴얼 랜딩이 자체 nav/footer 를 렌더하므로 글로벌 chrome 숨김.
 // 호스트 분기 (woori-media.com vs play.woori-media.com) 는 middleware 가 처리.
-const PLAYER_PATHS = ["/play", "/pair"];
+const PLAYER_PATHS = ["/play", "/pair", "/tv"];
 
 export default function Header() {
   const path = usePathname();
