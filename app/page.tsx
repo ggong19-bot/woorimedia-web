@@ -21,9 +21,9 @@ const marqueeItems = [
 ];
 
 const platforms = [
-  { name: "iOS", desc: "App Store · iPhone · iPad", live: true, glyph: "apple" },
-  { name: "Android", desc: "Play Store · 모든 Android", live: true, glyph: "android" },
-  { name: "macOS", desc: "Mac App Store · Apple Silicon", live: true, glyph: "desktop" },
+  { name: "iOS", desc: "App Store · iPhone · iPad", live: true, glyph: "apple", url: "https://apps.apple.com/app/id6768511630" },
+  { name: "Android", desc: "Play Store · 모든 Android", live: true, glyph: "android", url: "https://play.google.com/store/apps/details?id=com.woorimedia.android" },
+  { name: "macOS", desc: "Mac App Store · Apple Silicon", live: true, glyph: "desktop", url: "https://apps.apple.com/app/id6768511630" },
   { name: "Windows", desc: "MS Store · Windows 10+", live: true, glyph: "windows", url: "https://apps.microsoft.com/detail/9MXQD522RXZM" },
   { name: "Web", desc: "play.woori-media.com", live: true, glyph: "web" },
   { name: "LG webOS", desc: "LG Smart TV", live: false, glyph: "tv-lg" },

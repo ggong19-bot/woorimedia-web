@@ -35,7 +35,7 @@ export default function PlayLibraryPage() {
 
   return (
     <div>
-      <div className="mb-8 flex items-end justify-between">
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p
             className="text-xs font-extrabold uppercase"
@@ -58,13 +58,13 @@ export default function PlayLibraryPage() {
           >
             {albums === null
               ? "불러오는 중…"
-              : `등록된 한정판 USB · ${albums.length}장`}
+              : `등록된 앨범 · ${albums.length}개`}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Link
             href="/play/account"
-            className="inline-flex h-10 items-center rounded-full border px-4 text-sm font-bold transition hover:opacity-90"
+            className="inline-flex h-10 items-center whitespace-nowrap rounded-full border px-4 text-sm font-bold transition hover:opacity-90"
             style={{
               borderColor: "var(--woori-ink-hairline)",
               color: "var(--woori-ink)",
@@ -74,7 +74,7 @@ export default function PlayLibraryPage() {
           </Link>
           <Link
             href="/play/playlists"
-            className="inline-flex h-10 items-center rounded-full border px-4 text-sm font-bold transition hover:opacity-90"
+            className="inline-flex h-10 items-center whitespace-nowrap rounded-full border px-4 text-sm font-bold transition hover:opacity-90"
             style={{
               borderColor: "var(--woori-ink-hairline)",
               color: "var(--woori-ink)",

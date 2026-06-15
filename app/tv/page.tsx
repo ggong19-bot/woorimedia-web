@@ -140,7 +140,7 @@ export default function TvLibraryPage() {
           </h1>
         </div>
         <p className="text-2xl" style={{ opacity: 0.6 }}>
-          {albums === null ? "…" : `한정판 USB · ${albums.length}장`}
+          {albums === null ? "…" : `앨범 · ${albums.length}개`}
         </p>
       </header>
 
