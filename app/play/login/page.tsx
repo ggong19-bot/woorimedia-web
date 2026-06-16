@@ -163,24 +163,22 @@ export default function PlayLoginPage() {
                   ? "가입하고 시작"
                   : "이메일로 로그인"}
             </button>
-            <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center justify-between gap-3 text-xs">
               <button
                 onClick={() => {
                   setSignUp((s) => !s);
                   setErrMsg(null);
                 }}
-                className="text-white/80 hover:text-white hover:underline"
+                className="min-w-0 truncate text-left text-white/80 hover:text-white hover:underline"
               >
-                {signUp
-                  ? "이미 계정이 있어요 — 로그인"
-                  : "계정이 없어요 — 회원가입"}
+                {signUp ? "로그인하기" : "회원가입하기"}
               </button>
               <button
                 onClick={() => {
                   setEmailMode(false);
                   setErrMsg(null);
                 }}
-                className="text-white/60 hover:text-white"
+                className="shrink-0 text-white/60 hover:text-white"
               >
                 취소
               </button>

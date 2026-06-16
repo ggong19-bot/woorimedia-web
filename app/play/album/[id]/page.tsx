@@ -83,18 +83,18 @@ export default function PlayAlbumPage({
         className="-mx-6 mb-8 px-6 py-12 md:-mx-6"
         style={{ background: "var(--woori-ink)", color: "var(--woori-paper)" }}
       >
-        <div className="flex flex-col gap-8 md:flex-row md:items-end">
+        <div className="flex flex-col gap-6">
           {/* 커버 — coverUrl 있으면 이미지, 없으면 마크 placeholder */}
           <AlbumCover
             coverUrl={album.coverUrl}
             alt={album.title}
-            className="w-48 shrink-0 md:w-56"
+            className="w-44 shrink-0"
             markSize={96}
           />
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             {album.edition?.label && (
               <span
-                className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-medium uppercase"
+                className="inline-flex items-center gap-1 whitespace-nowrap px-2 py-1 text-[11px] font-medium uppercase"
                 style={{
                   background: "var(--woori-paper)",
                   color: "var(--woori-ink)",
@@ -106,13 +106,13 @@ export default function PlayAlbumPage({
               </span>
             )}
             <p
-              className="mt-3 text-sm font-semibold"
+              className="mt-3 truncate text-sm font-semibold"
               style={{ color: "rgba(246,244,239,0.85)" }}
             >
               {album.artist}
             </p>
             <h1
-              className="text-4xl font-extrabold leading-tight tracking-tight md:text-5xl"
+              className="text-2xl font-extrabold leading-tight tracking-tight break-keep"
               style={{ color: "var(--woori-paper)" }}
             >
               {album.title}
@@ -126,10 +126,10 @@ export default function PlayAlbumPage({
               {album.tracks.length}곡
               {album.videoResolution ? ` · ${album.videoResolution} 영상` : ""}
             </p>
-            <div className="mt-6 flex gap-3">
+            <div className="mt-6 flex flex-wrap gap-3">
               <button
                 onClick={() => play(0)}
-                className="inline-flex h-11 items-center rounded-full px-6 text-sm font-bold transition hover:opacity-90"
+                className="inline-flex h-11 flex-1 items-center justify-center whitespace-nowrap rounded-full px-4 text-sm font-bold transition hover:opacity-90"
                 style={{
                   background: "var(--woori-paper)",
                   color: "var(--woori-ink)",
@@ -146,7 +146,7 @@ export default function PlayAlbumPage({
                   );
                   if (!player.shuffle) player.toggleShuffle();
                 }}
-                className="inline-flex h-11 items-center rounded-full border px-6 text-sm font-bold transition hover:opacity-90"
+                className="inline-flex h-11 flex-1 items-center justify-center whitespace-nowrap rounded-full border px-4 text-sm font-bold transition hover:opacity-90"
                 style={{
                   borderColor: "rgba(246,244,239,0.3)",
                   background: "rgba(246,244,239,0.05)",
@@ -195,7 +195,7 @@ export default function PlayAlbumPage({
                 >
                   {isCur ? (player.isPlaying ? "▶" : "⏸") : t.trackNumber}
                 </span>
-                <div className="flex-1 truncate">
+                <div className="min-w-0 flex-1">
                   <p
                     className="truncate text-sm font-bold"
                     style={{ color: "var(--woori-ink)" }}
@@ -210,7 +210,7 @@ export default function PlayAlbumPage({
                   </p>
                 </div>
                 <span
-                  className="font-mono text-xs"
+                  className="shrink-0 font-mono text-xs"
                   style={{ color: "var(--woori-ink-subtle)" }}
                 >
                   {fmt(t.durationSeconds)}
@@ -220,7 +220,7 @@ export default function PlayAlbumPage({
                     e.stopPropagation();
                     setAddToPlaylistTrack(t);
                   }}
-                  className="flex h-7 w-7 items-center justify-center rounded-full transition hover:opacity-100"
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition hover:opacity-100"
                   style={{
                     color: "var(--woori-ink-subtle)",
                     opacity: 0.6,

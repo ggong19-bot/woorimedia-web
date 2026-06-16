@@ -28,8 +28,8 @@ export default function PlaylistsPage() {
 
   return (
     <div>
-      <div className="mb-8 flex items-end justify-between">
-        <div>
+      <div className="mb-8 flex items-end justify-between gap-3">
+        <div className="min-w-0 flex-1">
           <p
             className="text-xs font-extrabold uppercase"
             style={{
@@ -54,13 +54,13 @@ export default function PlaylistsPage() {
         </div>
         <button
           onClick={() => setCreating(true)}
-          className="inline-flex h-10 items-center rounded-full px-5 text-sm font-bold transition hover:opacity-90"
+          className="inline-flex h-10 shrink-0 items-center whitespace-nowrap rounded-full px-4 text-sm font-bold transition hover:opacity-90"
           style={{
             background: "var(--woori-ink)",
             color: "var(--woori-paper)",
           }}
         >
-          + 새 플레이리스트
+          + 새로 만들기
         </button>
       </div>
 

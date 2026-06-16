@@ -104,10 +104,10 @@ export default function PlaylistDetailPage({
         </p>
 
         {tracks.length > 0 && (
-          <div className="mt-5 flex gap-3">
+          <div className="mt-5 flex flex-wrap gap-3">
             <button
               onClick={() => play(0, false)}
-              className="inline-flex h-10 items-center rounded-full px-5 text-sm font-bold transition hover:opacity-90"
+              className="inline-flex h-10 flex-1 items-center justify-center whitespace-nowrap rounded-full px-4 text-sm font-bold transition hover:opacity-90"
               style={{
                 background: "var(--woori-ink)",
                 color: "var(--woori-paper)",
@@ -117,7 +117,7 @@ export default function PlaylistDetailPage({
             </button>
             <button
               onClick={() => play(Math.floor(Math.random() * tracks.length), true)}
-              className="inline-flex h-10 items-center rounded-full border px-5 text-sm font-bold transition"
+              className="inline-flex h-10 flex-1 items-center justify-center whitespace-nowrap rounded-full border px-4 text-sm font-bold transition"
               style={{
                 borderColor: "var(--woori-ink)",
                 color: "var(--woori-ink)",
@@ -182,14 +182,14 @@ export default function PlaylistDetailPage({
                   </p>
                 </div>
                 <span
-                  className="text-xs tabular-nums"
+                  className="shrink-0 text-xs tabular-nums"
                   style={{ color: "var(--woori-ink-subtle)" }}
                 >
                   {fmt(t.durationSeconds)}
                 </span>
                 <button
                   onClick={() => removeAt(i)}
-                  className="rounded-full px-2 py-1 text-xs transition hover:opacity-100"
+                  className="shrink-0 rounded-full px-2 py-1 text-xs transition hover:opacity-100"
                   style={{
                     color: "var(--woori-ink-subtle)",
                     opacity: 0.6,

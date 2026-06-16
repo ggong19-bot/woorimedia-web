@@ -68,7 +68,7 @@ export default function MiniPlayer() {
         {/* 곡 정보 — 클릭 시 전체 화면 플레이어 */}
         <button
           onClick={() => p.openFull()}
-          className="flex flex-1 items-center gap-2 truncate text-left transition hover:opacity-80"
+          className="flex min-w-0 flex-1 items-center gap-2 text-left transition hover:opacity-80"
           aria-label="전체 화면 플레이어 열기"
         >
           <span className="min-w-0 flex-1 truncate">
@@ -120,12 +120,12 @@ export default function MiniPlayer() {
           </ToggleIconButton>
         </div>
 
-        {/* 메인 컨트롤 */}
-        <div className="flex items-center gap-1">
+        {/* 메인 컨트롤 — 450px 팝업에서도 prev/play/next 항상 노출 */}
+        <div className="flex shrink-0 items-center gap-1">
           <IconButton
             onClick={() => p.prev()}
             ariaLabel="이전"
-            className="hidden md:flex"
+            className="shrink-0"
           >
             <PrevIcon />
           </IconButton>
@@ -144,7 +144,7 @@ export default function MiniPlayer() {
           <IconButton
             onClick={() => p.next()}
             ariaLabel="다음"
-            className="hidden md:flex"
+            className="shrink-0"
           >
             <NextIcon />
           </IconButton>

@@ -104,22 +104,22 @@ export default function AccountPage() {
                   background: "var(--woori-white)",
                 }}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
                   <span
-                    className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-extrabold"
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-extrabold"
                     style={{ background: meta.bg, color: meta.fg }}
                   >
                     {meta.label.slice(0, 1)}
                   </span>
-                  <div>
+                  <div className="min-w-0">
                     <div
-                      className="text-sm font-bold"
+                      className="truncate text-sm font-bold"
                       style={{ color: "var(--woori-ink)" }}
                     >
                       {meta.label}
                     </div>
                     <div
-                      className="text-xs"
+                      className="truncate text-xs"
                       style={{ color: "var(--woori-ink-subtle)" }}
                     >
                       {it.maskedEmail || "이메일 비공개"}
@@ -130,7 +130,7 @@ export default function AccountPage() {
                   onClick={() => unlink(it.provider)}
                   disabled={!!busy || isLast}
                   title={isLast ? "마지막 로그인 수단은 해제할 수 없습니다" : undefined}
-                  className="rounded-full border px-3 py-1.5 text-xs font-bold transition hover:opacity-80 disabled:opacity-40"
+                  className="ml-2 shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-bold transition hover:opacity-80 disabled:opacity-40"
                   style={{
                     borderColor: "var(--woori-ink-hairline)",
                     color: "var(--woori-ink)",

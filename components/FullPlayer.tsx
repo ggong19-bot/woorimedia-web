@@ -194,13 +194,13 @@ export default function FullPlayer() {
           {/* ─── 트랙 정보 ─── */}
           <div className="px-2 text-center">
             <h1
-              className="truncate text-xl font-extrabold"
+              className="line-clamp-2 break-keep text-xl font-extrabold"
               style={{ color: "var(--woori-ink)" }}
             >
               {cur.title}
             </h1>
             <p
-              className="mt-1 truncate text-sm"
+              className="mt-1 line-clamp-2 break-keep text-sm"
               style={{ color: "var(--woori-ink-subtle)" }}
             >
               {cur.artist} · {p.album.title}
@@ -431,7 +431,7 @@ function ModeChip({
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2 rounded-full px-4 py-2 transition"
+      className="flex shrink-0 items-center gap-2 rounded-full px-4 py-2 transition"
       style={{
         border: "1px solid var(--woori-ink-hairline)",
         background: active ? "var(--woori-ink)" : "transparent",
@@ -442,7 +442,7 @@ function ModeChip({
     >
       {children}
       <span
-        className="text-[10px] font-bold"
+        className="whitespace-nowrap text-[10px] font-bold"
         style={{ letterSpacing: "1.2px" }}
       >
         {label}

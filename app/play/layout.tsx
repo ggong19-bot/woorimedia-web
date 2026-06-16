@@ -50,18 +50,18 @@ function PlayInner({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-bg-soft pb-20">
       <header className="sticky top-0 z-20 border-b border-divider bg-white/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-[450px] items-center justify-between px-6">
-          <Link href="/play" className="flex items-center gap-3" aria-label="우리미디어">
+        <div className="mx-auto flex h-16 max-w-[450px] items-center justify-between gap-2 px-4">
+          <Link href="/play" className="flex min-w-0 shrink items-center gap-2" aria-label="우리미디어">
             <Image
               src="/logo/woorimedia-horizontal.svg"
               alt="우리미디어"
               width={130}
               height={26}
               priority
-              className="wm-logo-adaptive"
+              className="wm-logo-adaptive min-w-0"
             />
             <span
-              className="ml-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold tracking-widest"
+              className="ml-1 shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-extrabold tracking-widest"
               style={{
                 background: "var(--woori-ink)",
                 color: "var(--woori-paper)",
@@ -71,37 +71,17 @@ function PlayInner({ children }: { children: React.ReactNode }) {
             </span>
           </Link>
 
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="hidden text-sm font-semibold transition hover:opacity-100 md:inline-block"
-              style={{ color: "var(--woori-ink-subtle)" }}
-            >
-              홈으로
-            </Link>
-            <div
-              className="flex items-center gap-2 rounded-full px-3 py-1.5"
+          <div className="flex shrink-0 items-center gap-2">
+            <span
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-extrabold"
               style={{
-                background: "var(--woori-white)",
-                border: "1px solid var(--woori-ink-hairline)",
+                background: "var(--woori-ink)",
+                color: "var(--woori-paper)",
               }}
+              title={user?.displayName}
             >
-              <span
-                className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-extrabold"
-                style={{
-                  background: "var(--woori-ink)",
-                  color: "var(--woori-paper)",
-                }}
-              >
-                {user?.initial || "W"}
-              </span>
-              <span
-                className="hidden text-sm font-semibold md:inline-block"
-                style={{ color: "var(--woori-ink)" }}
-              >
-                {user?.displayName}
-              </span>
-            </div>
+              {user?.initial || "W"}
+            </span>
             <button
               onClick={async () => {
                 await signOut();

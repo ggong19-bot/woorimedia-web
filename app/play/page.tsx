@@ -64,7 +64,7 @@ export default function PlayLibraryPage() {
         <div className="flex shrink-0 items-center gap-2">
           <Link
             href="/play/account"
-            className="inline-flex h-10 items-center whitespace-nowrap rounded-full border px-4 text-sm font-bold transition hover:opacity-90"
+            className="inline-flex h-10 items-center whitespace-nowrap rounded-full border px-3 text-sm font-bold transition hover:opacity-90"
             style={{
               borderColor: "var(--woori-ink-hairline)",
               color: "var(--woori-ink)",
@@ -74,13 +74,13 @@ export default function PlayLibraryPage() {
           </Link>
           <Link
             href="/play/playlists"
-            className="inline-flex h-10 items-center whitespace-nowrap rounded-full border px-4 text-sm font-bold transition hover:opacity-90"
+            className="inline-flex h-10 items-center whitespace-nowrap rounded-full border px-3 text-sm font-bold transition hover:opacity-90"
             style={{
               borderColor: "var(--woori-ink-hairline)",
               color: "var(--woori-ink)",
             }}
           >
-            ▶ 내 플레이리스트
+            플레이리스트
           </Link>
         </div>
       </div>
@@ -224,16 +224,16 @@ function EmptyLibrary() {
         가능합니다. 앱에서 한 번 등록하시면, 같은 계정으로 로그인한 이 웹 플레이어에서도
         무손실 음원과 4K 영상을 바로 재생하실 수 있습니다.
       </p>
-      <a
-        href="https://woori-media.com/#platforms"
-        className="mt-6 inline-flex h-11 items-center rounded-full px-6 text-sm font-bold transition hover:opacity-90"
+      <Link
+        href="/play/download"
+        className="mt-6 inline-flex h-11 items-center whitespace-nowrap rounded-full px-6 text-sm font-bold transition hover:opacity-90"
         style={{
           background: "var(--woori-ink)",
           color: "var(--woori-paper)",
         }}
       >
-        앱 다운로드 (iOS · Android · Mac · Windows)
-      </a>
+        앱 다운로드
+      </Link>
     </div>
   );
 }
