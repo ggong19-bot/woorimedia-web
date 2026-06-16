@@ -224,16 +224,16 @@ function EmptyLibrary() {
         가능합니다. 앱에서 한 번 등록하시면, 같은 계정으로 로그인한 이 웹 플레이어에서도
         무손실 음원과 4K 영상을 바로 재생하실 수 있습니다.
       </p>
-      <Link
-        href="/product"
+      <a
+        href="https://woori-media.com/#platforms"
         className="mt-6 inline-flex h-11 items-center rounded-full px-6 text-sm font-bold transition hover:opacity-90"
         style={{
           background: "var(--woori-ink)",
           color: "var(--woori-paper)",
         }}
       >
-        앱 다운로드 안내
-      </Link>
+        앱 다운로드 (iOS · Android · Mac · Windows)
+      </a>
     </div>
   );
 }
