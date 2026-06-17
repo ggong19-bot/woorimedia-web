@@ -78,6 +78,14 @@ export default function PlayAlbumPage({
 
   return (
     <div>
+      {/* 앨범 → 라이브러리 뒤로가기 (좌상단) */}
+      <button
+        onClick={() => router.push("/play")}
+        className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold transition hover:opacity-70"
+        style={{ color: "var(--woori-ink-subtle)" }}
+      >
+        <span aria-hidden>←</span> 라이브러리
+      </button>
       {/* Hero — dark 톤 (ink bg + paper text) — 라이트/다크 모드 동일 */}
       <section
         className="-mx-6 mb-8 px-6 py-12 md:-mx-6"
@@ -235,20 +243,6 @@ export default function PlayAlbumPage({
           })}
         </ul>
       </section>
-
-      <div
-        className="mt-8 border p-5 text-xs"
-        style={{
-          borderColor: "var(--woori-ink-hairline)",
-          background: "var(--woori-white)",
-          color: "var(--woori-ink-subtle)",
-        }}
-      >
-        <strong style={{ color: "var(--woori-ink)" }}>스트리밍 안내:</strong>{" "}
-        음원 데이터는 백엔드의 활성화 검증을 통과한 사용자에게만 발급됩니다.
-        현재 프리뷰는 메타데이터 + 미니플레이어 시뮬레이션으로 구성되어 있으며,
-        실제 오디오 디코딩은 다음 단계에서 추가됩니다.
-      </div>
 
       {addToPlaylistTrack && (
         <AddToPlaylistSheet
