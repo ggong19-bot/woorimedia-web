@@ -144,7 +144,7 @@ const faqs = [
   },
   {
     q: "음반사나 레이블에서 발주하려면?",
-    a: "발주 문의는 박용훈 상무(yonghonp@naver.com · 010-9790-4127)로 연락 주시기 바랍니다. 최소 발주 수량 500장, 평균 1,000–3,000장, 출고까지 평균 8주가 소요됩니다.",
+    a: "발주 문의는 박용훈 상무(support@woori-media.com · 010-9790-4127)로 연락 주시기 바랍니다. 최소 발주 수량 500장, 평균 1,000–3,000장, 출고까지 평균 8주가 소요됩니다.",
   },
   {
     q: "활성화는 어떻게 하나요?",
@@ -889,7 +889,7 @@ export default function HomePage() {
                   <a href="#cta">활성화 가이드</a>
                 </li>
                 <li>
-                  <a href="mailto:yonghonp@naver.com">고객센터</a>
+                  <a href="mailto:support@woori-media.com">고객센터</a>
                 </li>
                 <li>
                   <a href="/logo/woorimedia-logo-master.svg">로고 다운로드</a>
@@ -900,10 +900,10 @@ export default function HomePage() {
               <h5>Contact</h5>
               <ul>
                 <li>
-                  <a href="mailto:yonghonp@naver.com">박용훈 상무</a>
+                  <a href="mailto:support@woori-media.com">박용훈 상무</a>
                 </li>
                 <li>
-                  <a href="mailto:yonghonp@naver.com">yonghonp@naver.com</a>
+                  <a href="mailto:support@woori-media.com">support@woori-media.com</a>
                 </li>
                 <li>
                   <a href="tel:01097904127">010·9790·4127</a>

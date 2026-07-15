@@ -185,7 +185,7 @@ export default function PartnersPage() {
             제품 시연 · 견적 · 출시 일정. 다음 USB 출시는 우리미디어와 함께.
           </p>
           <a
-            href="mailto:partners@woorimedia.com?subject=우리미디어 발주 문의"
+            href="mailto:support@woori-media.com?subject=우리미디어 발주 문의"
             className="mt-8 inline-flex h-14 items-center rounded-full bg-gold-gradient px-8 text-base font-extrabold text-navy-deep transition hover:brightness-110"
           >
             발주 문의 메일 보내기 →

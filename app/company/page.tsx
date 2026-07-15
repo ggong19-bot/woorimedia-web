@@ -100,28 +100,28 @@ export default function CompanyPage() {
           <p>
             <span className="font-bold text-navy-deep">파트너 발주 문의 · </span>
             <a
-              href="mailto:partners@woorimedia.com"
+              href="mailto:support@woori-media.com"
               className="text-gold-deep underline-offset-4 hover:underline"
             >
-              partners@woorimedia.com
+              support@woori-media.com
             </a>
           </p>
           <p>
             <span className="font-bold text-navy-deep">사용자 지원 · </span>
             <a
-              href="mailto:support@woorimedia.com"
+              href="mailto:support@woori-media.com"
               className="text-gold-deep underline-offset-4 hover:underline"
             >
-              support@woorimedia.com
+              support@woori-media.com
             </a>
           </p>
           <p>
             <span className="font-bold text-navy-deep">일반 문의 · </span>
             <a
-              href="mailto:contact@woorimedia.com"
+              href="mailto:support@woori-media.com"
               className="text-gold-deep underline-offset-4 hover:underline"
             >
-              contact@woorimedia.com
+              support@woori-media.com
             </a>
           </p>
         </div>
