@@ -102,10 +102,10 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:contact@woorimedia.com"
+                  href="mailto:support@woori-media.com"
                   className={linkClass}
                 >
-                  contact@woorimedia.com
+                  support@woori-media.com
                 </a>
               </li>
             </ul>
